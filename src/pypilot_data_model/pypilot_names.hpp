@@ -2,6 +2,7 @@
 
 #include <string.h>
 #include "field_table.hpp"
+#include "optional_field_table.hpp"
 
 namespace pypilot_data_model {
 
@@ -9,6 +10,11 @@ inline const FieldMeta* field_meta(FieldId id) {
     for (size_t i = 0; i < field_table_size; ++i) {
         if (field_table[i].id == id) {
             return &field_table[i];
+        }
+    }
+    for (size_t i = 0; i < optional_field_table_size; ++i) {
+        if (optional_field_table[i].id == id) {
+            return &optional_field_table[i];
         }
     }
     return nullptr;
@@ -26,6 +32,11 @@ inline FieldId field_id_from_name(const char* name) {
     for (size_t i = 0; i < field_table_size; ++i) {
         if (strcmp(field_table[i].pypilot_name, name) == 0) {
             return field_table[i].id;
+        }
+    }
+    for (size_t i = 0; i < optional_field_table_size; ++i) {
+        if (strcmp(optional_field_table[i].pypilot_name, name) == 0) {
+            return optional_field_table[i].id;
         }
     }
     return FieldId::unknown;
