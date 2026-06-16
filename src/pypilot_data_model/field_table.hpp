@@ -55,9 +55,12 @@ static constexpr FieldMeta field_table[] = {
     {FieldId::gps_declination_deg, "gps.declination", "deg", FieldType::number, false, false, false},
     {FieldId::gps_compass_error_deg, "gps.compass_error", "deg", FieldType::number, false, false, false},
 
+    {FieldId::apb_source, "apb.source", "", FieldType::source_enum, false, false, false},
     {FieldId::apb_track_deg, "apb.track", "deg", FieldType::number, false, false, false},
     {FieldId::apb_xte_nmi, "apb.xte", "nmi", FieldType::number, false, false, false},
     {FieldId::apb_xte_gain_deg_per_nmi, "apb.xte.gain", "deg/nmi", FieldType::number, true, true, false},
+    {FieldId::apb_mode_hint, "apb.mode_hint", "", FieldType::mode_enum, false, false, false},
+    {FieldId::apb_sender_id, "apb.sender_id", "", FieldType::string_value, false, false, false},
 
     {FieldId::water_speed_kn, "water.speed", "kn", FieldType::number, false, false, false},
     {FieldId::water_leeway_deg, "water.leeway", "deg", FieldType::number, false, false, false},
