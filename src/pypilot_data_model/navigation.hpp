@@ -31,6 +31,8 @@ struct ApbData {
     Stamped<Real> track_deg;
     Stamped<Real> xte_nmi;
     RangeSetting<Real> xte_gain_deg_per_nmi;
+    Setting<AutopilotMode> mode_hint;
+    char sender_id[3] = {0, 0, 0};
     uint64_t last_update_us = 0;
 };
 
