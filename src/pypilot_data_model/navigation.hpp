@@ -38,9 +38,25 @@ struct ApbData {
 };
 
 template<typename Real = float>
+struct RmbData {
+    Setting<SensorSource> source;
+    char origin_id[16] = {0};
+    char destination_id[16] = {0};
+    Stamped<Real> xte_nmi;
+    Stamped<Real> destination_lat_deg;
+    Stamped<Real> destination_lon_deg;
+    Stamped<Real> range_nmi;
+    Stamped<Real> bearing_deg;
+    Stamped<Real> closing_velocity_kn;
+    Setting<bool> arrived;
+    uint64_t last_update_us = 0;
+};
+
+template<typename Real = float>
 struct NavigationData {
     GpsData<Real> gps;
     ApbData<Real> apb;
+    RmbData<Real> rmb;
 };
 
 } // namespace pypilot_data_model
