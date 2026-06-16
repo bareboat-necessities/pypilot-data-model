@@ -28,7 +28,13 @@ int main() {
     mf.ap.enabled.value = true;
     mf.ap.mode.value = AutopilotMode::wind;
     mf.navigation.gps.speed_kn.set(5.5f, 1000000);
+    mf.navigation.apb.mode_hint.value = AutopilotMode::gps;
+    mf.navigation.apb.sender_id[0] = 'G';
+    mf.navigation.apb.sender_id[1] = 'P';
+    mf.navigation.apb.sender_id[2] = '\0';
     assert(mf.navigation.gps.speed_kn.valid);
+    assert(mf.navigation.apb.mode_hint.value == AutopilotMode::gps);
+    assert(mf.navigation.apb.sender_id[0] == 'G');
     assert(!mf.navigation.gps.speed_kn.stale(1100000, 200000));
     assert(mf.navigation.gps.speed_kn.stale(1300000, 200000));
 
