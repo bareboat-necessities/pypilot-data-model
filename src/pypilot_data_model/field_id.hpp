@@ -64,12 +64,23 @@ enum class FieldId : uint16_t {
     apb_mode_hint,
     apb_sender_id,
 
+    rmb_source,
+    rmb_xte_nmi,
+    rmb_destination_lat_deg,
+    rmb_destination_lon_deg,
+    rmb_range_nmi,
+    rmb_bearing_deg,
+    rmb_closing_velocity_kn,
+    rmb_arrived,
+
     water_speed_kn,
     water_leeway_deg,
     water_current_speed_kn,
     water_current_direction_deg,
     water_wind_speed_kn,
     water_wind_direction_deg,
+    water_depth_m,
+    water_depth_offset_m,
 
     rudder_angle_deg,
     rudder_speed_deg_s,
