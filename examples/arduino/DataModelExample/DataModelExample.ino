@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <pypilot_data_model/data_model.hpp>
+#include <pypilot_data_model.hpp>
 
 pypilot_data_model::DataModel<> model;
 
