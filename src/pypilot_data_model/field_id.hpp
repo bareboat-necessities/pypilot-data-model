@@ -56,9 +56,12 @@ enum class FieldId : uint16_t {
     gps_declination_deg,
     gps_compass_error_deg,
 
+    apb_source,
     apb_track_deg,
     apb_xte_nmi,
     apb_xte_gain_deg_per_nmi,
+    apb_mode_hint,
+    apb_sender_id,
 
     water_speed_kn,
     water_leeway_deg,
