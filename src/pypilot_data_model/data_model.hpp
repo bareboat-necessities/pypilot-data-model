@@ -26,3 +26,5 @@ struct DataModel {
 };
 
 } // namespace pypilot_data_model
+
+#include "mapping.hpp"
