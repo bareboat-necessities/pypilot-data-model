@@ -9,6 +9,7 @@ struct GpsData {
     Setting<SensorSource> source;
     RangeSetting<Real> rate_hz;
 
+    Stamped<Real> timestamp_s;
     Stamped<Real> track_deg;
     Stamped<Real> speed_kn;
 
