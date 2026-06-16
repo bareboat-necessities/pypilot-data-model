@@ -51,6 +51,7 @@ enum class FieldId : uint16_t {
     truewind_filter_factor_0_1,
 
     gps_source,
+    gps_timestamp_s,
     gps_track_deg,
     gps_speed_kn,
     gps_declination_deg,
