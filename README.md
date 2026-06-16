@@ -43,6 +43,17 @@ Include:
 #include <pypilot_data_model/data_model.hpp>
 ```
 
+## Field mapping
+
+The library also includes a typed pypilot name map in the same package. It maps protocol names such as `ap.heading`, `wind.filtered_direction`, and `servo.current` to `FieldId` values and provides switch-based typed accessors into `DataModel<Real>`. This keeps pypilot strings at the boundary while preserving type-safe structs internally.
+
+```cpp
+#include <pypilot_data_model/data_model.hpp>
+
+auto id = pypilot_data_model::field_id_from_name("ap.heading");
+pypilot_data_model::apply_number(model, id, 123.4f, now_us);
+```
+
 ## License
 
 GPL-3.0-or-later.
