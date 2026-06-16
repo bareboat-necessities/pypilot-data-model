@@ -1,5 +1,5 @@
 #include <iostream>
-#include <pypilot_data_model/data_model.hpp>
+#include <pypilot_data_model.hpp>
 
 int main() {
     pypilot_data_model::DataModel<> model;
