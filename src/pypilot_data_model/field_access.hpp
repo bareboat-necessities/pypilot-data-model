@@ -184,6 +184,7 @@ inline bool apply_source(DataModel<Real>& model, FieldId id, SensorSource value,
     case FieldId::wind_source: model.wind.apparent.source.value = value; return true;
     case FieldId::truewind_source: model.wind.truewind.source.value = value; return true;
     case FieldId::gps_source: model.navigation.gps.source.value = value; return true;
+    case FieldId::apb_source: model.navigation.apb.source.value = value; return true;
     default: return false;
     }
 }
@@ -192,6 +193,10 @@ template<typename Real>
 inline bool apply_mode(DataModel<Real>& model, FieldId id, AutopilotMode value, uint64_t) {
     if (id == FieldId::ap_mode) {
         model.ap.mode.value = value;
+        return true;
+    }
+    if (id == FieldId::apb_mode_hint) {
+        model.navigation.apb.mode_hint.value = value;
         return true;
     }
     return false;
@@ -213,6 +218,27 @@ inline bool apply_rudder_calibration_state(DataModel<Real>& model, FieldId id, R
         return true;
     }
     return false;
+}
+
+template<typename Real>
+inline bool apply_string(DataModel<Real>& model, FieldId id, const char* value, uint64_t) {
+    if (!value) return false;
+    switch (id) {
+    case FieldId::apb_sender_id:
+        model.navigation.apb.sender_id[0] = value[0] ? value[0] : '\0';
+        model.navigation.apb.sender_id[1] = value[0] && value[1] ? value[1] : '\0';
+        model.navigation.apb.sender_id[2] = '\0';
+        return true;
+    default: return false;
+    }
+}
+
+template<typename Real>
+inline bool read_string(const DataModel<Real>& model, FieldId id, const char*& out) {
+    switch (id) {
+    case FieldId::apb_sender_id: out = model.navigation.apb.sender_id; return model.navigation.apb.sender_id[0] != '\0';
+    default: return false;
+    }
 }
 
 } // namespace pypilot_data_model
