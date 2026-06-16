@@ -1,6 +1,6 @@
 #include <cassert>
 #include <cstring>
-#include <pypilot_data_model/data_model.hpp>
+#include <pypilot_data_model.hpp>
 
 using namespace pypilot_data_model;
 
