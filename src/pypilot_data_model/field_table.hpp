@@ -50,6 +50,7 @@ static constexpr FieldMeta field_table[] = {
     {FieldId::truewind_filter_factor_0_1, "truewind.filter_factor", "", FieldType::number, false, false, false},
 
     {FieldId::gps_source, "gps.source", "", FieldType::source_enum, false, false, false},
+    {FieldId::gps_timestamp_s, "gps.timestamp", "s", FieldType::number, false, false, false},
     {FieldId::gps_track_deg, "gps.track", "deg", FieldType::number, false, false, false},
     {FieldId::gps_speed_kn, "gps.speed", "kn", FieldType::number, false, false, false},
     {FieldId::gps_declination_deg, "gps.declination", "deg", FieldType::number, false, false, false},
