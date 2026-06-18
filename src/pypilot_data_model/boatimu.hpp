@@ -6,6 +6,10 @@ namespace pypilot_data_model {
 
 template<typename Real = float>
 struct BoatImuData {
+    Setting<uint8_t> source_kind;
+    char device_id[32] = {0};
+    uint64_t last_update_us = 0;
+
     Setting<uint8_t> rate_hz;
     Stamped<Real> frequency_hz;
 
