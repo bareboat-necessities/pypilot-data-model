@@ -19,7 +19,6 @@ int main() {
     model.imu_calibration.state.value = ImuCalibrationState::valid;
     model.imu_calibration.accel.valid.value = true;
     model.imu_calibration.accel.bias.value.x = 0.1f;
-    model.imu_calibration.compass.field_strength = Stamped<float>();
     model.imu_calibration.compass.valid.value = true;
     model.imu_calibration.compass_field_strength.set(47.0f, 300);
 
@@ -60,7 +59,7 @@ int main() {
     assert(found_servo_flags);
 
     model.runtime_publication.published_value_count.set(static_cast<uint32_t>(count), 800);
-    assert(model.runtime_publication.published_value_count.value == count);
+    assert(model.runtime_publication.published_value_count.value == static_cast<uint32_t>(count));
 
     return 0;
 }
