@@ -22,4 +22,8 @@ if(PYPILOT_DATA_MODEL_BUILD_TESTS)
   add_executable(test_field_map tests/test_field_map.cpp)
   target_link_libraries(test_field_map PRIVATE pypilot_data_model)
   add_test(NAME test_field_map COMMAND test_field_map)
+
+  add_executable(test_extended_model tests/test_extended_model.cpp)
+  target_link_libraries(test_extended_model PRIVATE pypilot_data_model)
+  add_test(NAME test_extended_model COMMAND test_extended_model)
 endif()
