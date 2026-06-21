@@ -4,8 +4,12 @@ Header-only C++ data structures matching the current pypilot runtime model from 
 
 This project is deliberately **not** a future marine-INS model and deliberately **not** a hashmap of pypilot values. It is a typed C++ model for the current pypilot data groups:
 
+- `server.*`
+- `status.*` and fault/warning state
 - `ap.*`
+- `ap.tack.*`
 - `imu.*`
+- IMU state and calibration
 - `gps.*`
 - `apb.*`
 - `wind.*`
@@ -13,8 +17,11 @@ This project is deliberately **not** a future marine-INS model and deliberately 
 - `water.*`
 - `rudder.*`
 - `servo.*`
+- extended servo telemetry and calibration
+- pilot command/output state
 - `ap.pilot.*`
 - profile placeholders
+- runtime-publication metadata and counters
 
 Design constraints:
 
@@ -26,6 +33,26 @@ Design constraints:
 - monotonic microsecond timestamps for live values
 - type-safe structs and enums, not hash maps
 - no sockets, no serial, no JSON parser, no pilot math
+
+## Expanded value coverage
+
+The model now includes explicit typed groups for:
+
+```text
+ServerData
+StatusData
+TackData
+ServoTelemetryData
+ServoCalibrationData
+ImuStateData
+ImuCalibrationData
+PilotCommandData
+PilotOutputData
+RuntimePublicationState
+RuntimeValueMetadata table
+```
+
+The runtime metadata table is a static typed table, not a dynamic binding registry. It gives runtime-facing code enough information to publish known pypilot names such as `ap.enabled`, `imu.heading_lowpass`, `gps.speed`, `wind.speed`, `servo.flags`, and `server.uptime` while keeping actual storage in typed C++ fields.
 
 ## Build on Linux
 
