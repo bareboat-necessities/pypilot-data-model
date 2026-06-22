@@ -3,7 +3,7 @@
 #include <string.h>
 #include "field_table.hpp"
 #include "optional_field_table.hpp"
-#include "pypilot_original_aliases.hpp"
+#include "pypilot_compat_aliases.hpp"
 
 namespace pypilot_data_model {
 
@@ -27,20 +27,14 @@ inline const char* pypilot_name(FieldId id) {
 }
 
 inline FieldId field_id_from_name(const char* name) {
-    if (!name) {
-        return FieldId::unknown;
-    }
+    if (!name) return FieldId::unknown;
     for (size_t i = 0; i < field_table_size; ++i) {
-        if (strcmp(field_table[i].pypilot_name, name) == 0) {
-            return field_table[i].id;
-        }
+        if (strcmp(field_table[i].pypilot_name, name) == 0) return field_table[i].id;
     }
     for (size_t i = 0; i < optional_field_table_size; ++i) {
-        if (strcmp(optional_field_table[i].pypilot_name, name) == 0) {
-            return optional_field_table[i].id;
-        }
+        if (strcmp(optional_field_table[i].pypilot_name, name) == 0) return optional_field_table[i].id;
     }
-    return field_id_from_original_alias(name);
+    return field_id_from_compat_name(name);
 }
 
 inline const char* sensor_source_name(SensorSource source) {
