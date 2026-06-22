@@ -3,6 +3,7 @@
 #include <string.h>
 #include "field_table.hpp"
 #include "optional_field_table.hpp"
+#include "pypilot_original_aliases.hpp"
 
 namespace pypilot_data_model {
 
@@ -39,7 +40,7 @@ inline FieldId field_id_from_name(const char* name) {
             return optional_field_table[i].id;
         }
     }
-    return FieldId::unknown;
+    return field_id_from_original_alias(name);
 }
 
 inline const char* sensor_source_name(SensorSource source) {
