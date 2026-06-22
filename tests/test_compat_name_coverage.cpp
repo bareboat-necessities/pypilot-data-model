@@ -1,0 +1,27 @@
+#include <cassert>
+#include <cstdio>
+#include <pypilot_data_model.hpp>
+#include "support/pypilot_compat_name_list.hpp"
+
+using namespace pypilot_data_model;
+using namespace pypilot_data_model_test;
+
+int main() {
+    size_t missing = 0;
+    for (size_t i = 0; i < pypilot_compat_names_size; ++i) {
+        const char* name = pypilot_compat_names[i];
+        const FieldId id = field_id_from_name(name);
+        if (id == FieldId::unknown) {
+            std::fprintf(stderr, "missing pypilot compat name: %s\n", name);
+            ++missing;
+        }
+    }
+    assert(missing == 0);
+
+    assert(field_id_from_name("ap.version") == FieldId::server_version);
+    assert(field_id_from_name("imu.heading_offset") == FieldId::imu_calibration_heading_offset_deg);
+    assert(field_id_from_name("servo.state") == FieldId::servo_telemetry_state);
+    assert(field_id_from_name("ap.pilot.learning.P") == FieldId::pilot_basic_P);
+    assert(field_id_from_name("does.not.exist") == FieldId::unknown);
+    return 0;
+}
