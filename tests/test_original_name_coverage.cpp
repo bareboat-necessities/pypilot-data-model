@@ -1,9 +1,10 @@
 #include <cassert>
 #include <cstdio>
 #include <pypilot_data_model.hpp>
-#include <pypilot_data_model/pypilot_original_names.hpp>
+#include "support/pypilot_original_names.hpp"
 
 using namespace pypilot_data_model;
+using namespace pypilot_data_model_test;
 
 int main() {
     size_t missing = 0;
