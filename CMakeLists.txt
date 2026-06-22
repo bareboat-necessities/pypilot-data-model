@@ -26,4 +26,8 @@ if(PYPILOT_DATA_MODEL_BUILD_TESTS)
   add_executable(test_extended_model tests/test_extended_model.cpp)
   target_link_libraries(test_extended_model PRIVATE pypilot_data_model)
   add_test(NAME test_extended_model COMMAND test_extended_model)
+
+  add_executable(test_original_name_coverage tests/test_original_name_coverage.cpp)
+  target_link_libraries(test_original_name_coverage PRIVATE pypilot_data_model)
+  add_test(NAME test_original_name_coverage COMMAND test_original_name_coverage)
 endif()
