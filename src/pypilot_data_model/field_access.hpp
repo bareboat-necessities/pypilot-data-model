@@ -51,7 +51,6 @@ inline bool apply_number(DataModel<Real>& model, FieldId id, Real value, uint64_
     case FieldId::ap_tack_start_heading_deg: model.tack.start_heading_deg.set(value, now_us); return true;
     case FieldId::ap_tack_target_heading_deg: model.tack.target_heading_deg.set(value, now_us); return true;
 
-    case FieldId::pilot_command_source: model.pilot_command.source.value = static_cast<PilotCommandSource>(static_cast<uint8_t>(value)); return true;
     case FieldId::pilot_command_heading_deg: model.pilot_command.heading_command_deg.set_external(value, now_us); return true;
     case FieldId::pilot_command_heading_rate_deg_s: model.pilot_command.heading_command_rate_deg_s.set_external(value, now_us); return true;
     case FieldId::pilot_command_servo_norm: model.pilot_command.servo_command_norm.set_external(value, now_us); return true;
@@ -107,6 +106,7 @@ inline bool apply_number(DataModel<Real>& model, FieldId id, Real value, uint64_
     case FieldId::truewind_filter_constant_0_1: model.wind.truewind.filter_constant_0_1.value = value; return true;
     case FieldId::truewind_filter_factor_0_1: model.wind.truewind.filter_factor_0_1.set(value, now_us); return true;
 
+    case FieldId::gps_timestamp_s: model.navigation.gps.timestamp_s.set(value, now_us); return true;
     case FieldId::gps_track_deg: model.navigation.gps.track_deg.set(value, now_us); return true;
     case FieldId::gps_speed_kn: model.navigation.gps.speed_kn.set(value, now_us); return true;
     case FieldId::gps_declination_deg: model.navigation.gps.declination_deg.set(value, now_us); return true;
@@ -166,17 +166,6 @@ inline bool apply_number(DataModel<Real>& model, FieldId id, Real value, uint64_
     case FieldId::servo_telemetry_timeout_count: model.servo_telemetry.timeout_count.set(static_cast<uint32_t>(value), now_us); return true;
     case FieldId::servo_telemetry_reboot_count: model.servo_telemetry.controller_reboot_count.set(static_cast<uint32_t>(value), now_us); return true;
 
-    case FieldId::pilot_basic_P: model.pilots.basic.P.gain.value = value; return true;
-    case FieldId::pilot_basic_Pgain: model.pilots.basic.P.contribution.set(value, now_us); return true;
-    case FieldId::pilot_basic_D: model.pilots.basic.D.gain.value = value; return true;
-    case FieldId::pilot_basic_Dgain: model.pilots.basic.D.contribution.set(value, now_us); return true;
-    case FieldId::pilot_basic_DD: model.pilots.basic.DD.gain.value = value; return true;
-    case FieldId::pilot_basic_DDgain: model.pilots.basic.DD.contribution.set(value, now_us); return true;
-    case FieldId::pilot_basic_PR: model.pilots.basic.PR.gain.value = value; return true;
-    case FieldId::pilot_basic_PRgain: model.pilots.basic.PR.contribution.set(value, now_us); return true;
-    case FieldId::pilot_basic_FF: model.pilots.basic.FF.gain.value = value; return true;
-    case FieldId::pilot_basic_FFgain: model.pilots.basic.FF.contribution.set(value, now_us); return true;
-
     case FieldId::runtime_last_publish_period_s: model.runtime_publication.last_publish_period_s.set(value, now_us); return true;
     case FieldId::runtime_published_value_count: model.runtime_publication.published_value_count.set(static_cast<uint32_t>(value), now_us); return true;
     case FieldId::runtime_dropped_value_count: model.runtime_publication.dropped_value_count.set(static_cast<uint32_t>(value), now_us); return true;
@@ -190,21 +179,42 @@ inline bool read_number(const DataModel<Real>& model, FieldId id, Real& out) {
     switch (id) {
     case FieldId::server_uptime_s: out = model.server.uptime_s.value; return model.server.uptime_s.valid;
     case FieldId::server_client_count: out = static_cast<Real>(model.server.client_count.value); return model.server.client_count.valid;
+    case FieldId::server_value_count: out = static_cast<Real>(model.server.value_count.value); return model.server.value_count.valid;
+    case FieldId::server_watch_count: out = static_cast<Real>(model.server.watch_count.value); return model.server.watch_count.valid;
     case FieldId::status_faults: out = static_cast<Real>(model.status.faults.value); return true;
     case FieldId::status_warnings: out = static_cast<Real>(model.status.warnings.value); return true;
     case FieldId::ap_heading_deg: out = model.ap.heading_deg.value; return model.ap.heading_deg.valid;
     case FieldId::ap_heading_command_deg: out = model.ap.heading_command_deg.value; return model.ap.heading_command_deg.valid;
     case FieldId::ap_heading_error_deg: out = model.ap.heading_error_deg.value; return model.ap.heading_error_deg.valid;
+    case FieldId::ap_heading_error_int_deg: out = model.ap.heading_error_int_deg.value; return model.ap.heading_error_int_deg.valid;
+    case FieldId::ap_heading_command_rate_deg_s: out = model.ap.heading_command_rate_deg_s.value; return model.ap.heading_command_rate_deg_s.valid;
+    case FieldId::ap_runtime_s: out = model.ap.runtime_s.value; return model.ap.runtime_s.valid;
+    case FieldId::ap_tack_state: out = static_cast<Real>(model.tack.state.value); return true;
+    case FieldId::ap_tack_direction: out = static_cast<Real>(model.tack.direction.value); return true;
+    case FieldId::imu_heading_deg: out = model.imu.heading_deg.value; return model.imu.heading_deg.valid;
     case FieldId::imu_heading_lowpass_deg: out = model.imu.heading_lowpass_deg.value; return model.imu.heading_lowpass_deg.valid;
-    case FieldId::wind_filtered_direction_deg: out = model.wind.apparent.filtered_direction_deg.value; return model.wind.apparent.filtered_direction_deg.valid;
-    case FieldId::wind_speed_kn: out = model.wind.apparent.speed_kn.value; return model.wind.apparent.speed_kn.valid;
+    case FieldId::imu_headingrate_deg_s: out = model.imu.heading_rate_deg_s.value; return model.imu.heading_rate_deg_s.valid;
+    case FieldId::imu_headingrate_lowpass_deg_s: out = model.imu.heading_rate_lowpass_deg_s.value; return model.imu.heading_rate_lowpass_deg_s.valid;
+    case FieldId::imu_pitch_deg: out = model.imu.pitch_deg.value; return model.imu.pitch_deg.valid;
+    case FieldId::imu_roll_deg: out = model.imu.roll_deg.value; return model.imu.roll_deg.valid;
+    case FieldId::imu_heel_deg: out = model.imu.heel_deg.value; return model.imu.heel_deg.valid;
+    case FieldId::gps_timestamp_s: out = model.navigation.gps.timestamp_s.value; return model.navigation.gps.timestamp_s.valid;
+    case FieldId::gps_track_deg: out = model.navigation.gps.track_deg.value; return model.navigation.gps.track_deg.valid;
     case FieldId::gps_speed_kn: out = model.navigation.gps.speed_kn.value; return model.navigation.gps.speed_kn.valid;
+    case FieldId::wind_direction_deg: out = model.wind.apparent.direction_deg.value; return model.wind.apparent.direction_deg.valid;
+    case FieldId::wind_speed_kn: out = model.wind.apparent.speed_kn.value; return model.wind.apparent.speed_kn.valid;
+    case FieldId::truewind_direction_deg: out = model.wind.truewind.direction_deg.value; return model.wind.truewind.direction_deg.valid;
+    case FieldId::truewind_speed_kn: out = model.wind.truewind.speed_kn.value; return model.wind.truewind.speed_kn.valid;
+    case FieldId::water_speed_kn: out = model.water.speed_kn.value; return model.water.speed_kn.valid;
+    case FieldId::rudder_angle_deg: out = model.rudder.angle_deg.value; return model.rudder.angle_deg.valid;
     case FieldId::servo_current_a: out = model.servo.current_a.value; return model.servo.current_a.valid;
     case FieldId::servo_command_norm: out = model.servo.command_norm.value; return model.servo.command_norm.valid;
-    case FieldId::servo_telemetry_current_a: out = model.servo_telemetry.current_a.value; return model.servo_telemetry.current_a.valid;
-    case FieldId::pilot_output_command_norm: out = model.pilot_output.command_norm.value; return model.pilot_output.command_norm.valid;
-    case FieldId::pilot_basic_P: out = model.pilots.basic.P.gain.value; return true;
-    case FieldId::pilot_basic_Pgain: out = model.pilots.basic.P.contribution.value; return model.pilots.basic.P.contribution.valid;
+    case FieldId::servo_voltage_v: out = model.servo.voltage_v.value; return model.servo.voltage_v.valid;
+    case FieldId::servo_position_deg: out = model.servo.position_deg.value; return model.servo.position_deg.valid;
+    case FieldId::servo_controller_temp_c: out = model.servo.controller_temp_c.value; return model.servo.controller_temp_c.valid;
+    case FieldId::servo_motor_temp_c: out = model.servo.motor_temp_c.value; return model.servo.motor_temp_c.valid;
+    case FieldId::servo_flags: out = static_cast<Real>(model.servo.flags.value); return true;
+    case FieldId::servo_faults: out = static_cast<Real>(model.servo.faults.value); return true;
     case FieldId::runtime_published_value_count: out = static_cast<Real>(model.runtime_publication.published_value_count.value); return model.runtime_publication.published_value_count.valid;
     default: return false;
     }
@@ -258,6 +268,17 @@ inline bool apply_source(DataModel<Real>& model, FieldId id, SensorSource value,
 }
 
 template<typename Real>
+inline bool read_source(const DataModel<Real>& model, FieldId id, SensorSource& out) {
+    switch (id) {
+    case FieldId::wind_source: out = model.wind.apparent.source.value; return true;
+    case FieldId::truewind_source: out = model.wind.truewind.source.value; return true;
+    case FieldId::gps_source: out = model.navigation.gps.source.value; return true;
+    case FieldId::apb_source: out = model.navigation.apb.source.value; return true;
+    default: return false;
+    }
+}
+
+template<typename Real>
 inline bool apply_mode(DataModel<Real>& model, FieldId id, AutopilotMode value, uint64_t now_us) {
     switch (id) {
     case FieldId::ap_mode: model.ap.mode.value = value; return true;
@@ -269,10 +290,28 @@ inline bool apply_mode(DataModel<Real>& model, FieldId id, AutopilotMode value, 
 }
 
 template<typename Real>
+inline bool read_mode(const DataModel<Real>& model, FieldId id, AutopilotMode& out) {
+    switch (id) {
+    case FieldId::ap_mode: out = model.ap.mode.value; return true;
+    case FieldId::ap_preferred_mode: out = model.ap.preferred_mode.value; return true;
+    case FieldId::apb_mode_hint: out = model.navigation.apb.mode_hint.value; return true;
+    default: return false;
+    }
+}
+
+template<typename Real>
 inline bool apply_pilot(DataModel<Real>& model, FieldId id, PilotName value, uint64_t now_us) {
     switch (id) {
     case FieldId::ap_pilot: model.ap.pilot.value = value; return true;
     case FieldId::pilot_command_source: (void)now_us; return false;
+    default: return false;
+    }
+}
+
+template<typename Real>
+inline bool read_pilot(const DataModel<Real>& model, FieldId id, PilotName& out) {
+    switch (id) {
+    case FieldId::ap_pilot: out = model.ap.pilot.value; return true;
     default: return false;
     }
 }
@@ -319,7 +358,7 @@ inline bool read_string(const DataModel<Real>& model, FieldId id, const char*& o
     case FieldId::status_last_warning: out = model.status.last_warning; return model.status.last_warning[0] != '\0';
     case FieldId::pilot_output_active_name: out = model.pilot_output.active_pilot_name; return model.pilot_output.active_pilot_name[0] != '\0';
     case FieldId::imu_state_device: out = model.imu_state.device; return model.imu_state.device[0] != '\0';
-    case FieldId::imu_state_driver: out = model.imu_state.driver; return model.imu_state.driver[0] != '\0';
+    case FieldId::imu_state_driver: out = model.imu_state.driver; return model.imu_state_driver[0] != '\0';
     case FieldId::apb_sender_id: out = model.navigation.apb.sender_id; return model.navigation.apb.sender_id[0] != '\0';
     default: return false;
     }
