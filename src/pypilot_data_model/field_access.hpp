@@ -179,7 +179,7 @@ inline bool read_number(const DataModel<Real>& model, FieldId id, Real& out) {
     switch (id) {
     case FieldId::server_uptime_s: out = model.server.uptime_s.value; return model.server.uptime_s.valid;
     case FieldId::server_client_count: out = static_cast<Real>(model.server.client_count.value); return model.server.client_count.valid;
-    case FieldId::server_value_count: out = static_cast<Real>(model.server.value_count.value); return model.server_value_count.valid;
+    case FieldId::server_value_count: out = static_cast<Real>(model.server.value_count.value); return model.server.value_count.valid;
     case FieldId::server_watch_count: out = static_cast<Real>(model.server.watch_count.value); return model.server.watch_count.valid;
     case FieldId::status_faults: out = static_cast<Real>(model.status.faults.value); return true;
     case FieldId::status_warnings: out = static_cast<Real>(model.status.warnings.value); return true;
