@@ -179,7 +179,7 @@ inline bool read_number(const DataModel<Real>& model, FieldId id, Real& out) {
     switch (id) {
     case FieldId::server_uptime_s: out = model.server.uptime_s.value; return model.server.uptime_s.valid;
     case FieldId::server_client_count: out = static_cast<Real>(model.server.client_count.value); return model.server.client_count.valid;
-    case FieldId::server_value_count: out = static_cast<Real>(model.server.value_count.value); return model.server.value_count.valid;
+    case FieldId::server_value_count: out = static_cast<Real>(model.server.value_count.value); return model.server_value_count.valid;
     case FieldId::server_watch_count: out = static_cast<Real>(model.server.watch_count.value); return model.server.watch_count.valid;
     case FieldId::status_faults: out = static_cast<Real>(model.status.faults.value); return true;
     case FieldId::status_warnings: out = static_cast<Real>(model.status.warnings.value); return true;
@@ -358,7 +358,7 @@ inline bool read_string(const DataModel<Real>& model, FieldId id, const char*& o
     case FieldId::status_last_warning: out = model.status.last_warning; return model.status.last_warning[0] != '\0';
     case FieldId::pilot_output_active_name: out = model.pilot_output.active_pilot_name; return model.pilot_output.active_pilot_name[0] != '\0';
     case FieldId::imu_state_device: out = model.imu_state.device; return model.imu_state.device[0] != '\0';
-    case FieldId::imu_state_driver: out = model.imu_state.driver; return model.imu_state_driver[0] != '\0';
+    case FieldId::imu_state_driver: out = model.imu_state.driver; return model.imu_state.driver[0] != '\0';
     case FieldId::apb_sender_id: out = model.navigation.apb.sender_id; return model.navigation.apb.sender_id[0] != '\0';
     default: return false;
     }
