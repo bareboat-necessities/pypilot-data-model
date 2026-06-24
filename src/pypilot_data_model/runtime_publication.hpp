@@ -48,14 +48,14 @@ inline const RuntimeValueMetadata* core_runtime_values(size_t& count) {
         {FieldId::imu_heel_deg, "imu.heel", RuntimeValueType::number, RuntimeValueScope::telemetry, false, false},
         {FieldId::imu_headingrate_deg_s, "imu.headingrate", RuntimeValueType::number, RuntimeValueScope::telemetry, false, false},
         {FieldId::imu_headingrate_lowpass_deg_s, "imu.headingrate_lowpass", RuntimeValueType::number, RuntimeValueScope::telemetry, false, false},
-        {FieldId::gps_source, "gps.source", RuntimeValueType::integer, RuntimeValueScope::telemetry, false, false},
+        {FieldId::gps_source, "gps.source", RuntimeValueType::string_value, RuntimeValueScope::telemetry, false, false},
         {FieldId::gps_speed_kn, "gps.speed", RuntimeValueType::number, RuntimeValueScope::telemetry, false, false},
         {FieldId::gps_track_deg, "gps.track", RuntimeValueType::number, RuntimeValueScope::telemetry, false, false},
         {FieldId::gps_timestamp_s, "gps.timestamp", RuntimeValueType::number, RuntimeValueScope::telemetry, false, false},
-        {FieldId::wind_source, "wind.source", RuntimeValueType::integer, RuntimeValueScope::telemetry, false, false},
+        {FieldId::wind_source, "wind.source", RuntimeValueType::string_value, RuntimeValueScope::telemetry, false, false},
         {FieldId::wind_speed_kn, "wind.speed", RuntimeValueType::number, RuntimeValueScope::telemetry, false, false},
         {FieldId::wind_direction_deg, "wind.direction", RuntimeValueType::number, RuntimeValueScope::telemetry, false, false},
-        {FieldId::truewind_source, "truewind.source", RuntimeValueType::integer, RuntimeValueScope::telemetry, false, false},
+        {FieldId::truewind_source, "truewind.source", RuntimeValueType::string_value, RuntimeValueScope::telemetry, false, false},
         {FieldId::truewind_speed_kn, "truewind.speed", RuntimeValueType::number, RuntimeValueScope::telemetry, false, false},
         {FieldId::truewind_direction_deg, "truewind.direction", RuntimeValueType::number, RuntimeValueScope::telemetry, false, false},
         {FieldId::water_speed_kn, "water.speed", RuntimeValueType::number, RuntimeValueScope::telemetry, false, false},
@@ -80,13 +80,5 @@ inline const RuntimeValueMetadata* core_runtime_values(size_t& count) {
     count = sizeof(values) / sizeof(values[0]);
     return values;
 }
-
-template<typename Real = float>
-struct RuntimePublicationState {
-    Stamped<Real> last_publish_period_s;
-    Stamped<uint32_t> published_value_count;
-    Stamped<uint32_t> dropped_value_count;
-    uint64_t last_publish_us = 0;
-};
 
 } // namespace pypilot_data_model
