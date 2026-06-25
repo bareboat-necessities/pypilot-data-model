@@ -45,21 +45,14 @@ int main() {
     model.pilot_output.active_pilot_name[4] = 'c';
     model.pilot_output.command_norm.set(0.25f, 700);
 
-    size_t count = 0;
-    const RuntimeValueMetadata* values = core_runtime_values(count);
-    assert(values != 0);
-    assert(count > 20);
-    bool found_ap_enabled = false;
-    bool found_servo_flags = false;
-    for (size_t i = 0; i < count; ++i) {
-        if (std::strcmp(values[i].name, "ap.enabled") == 0) found_ap_enabled = true;
-        if (std::strcmp(values[i].name, "servo.flags") == 0) found_servo_flags = true;
-    }
-    assert(found_ap_enabled);
-    assert(found_servo_flags);
+    assert(field_id_from_name("ap.enabled") == FieldId::ap_enabled);
+    assert(field_id_from_name("servo.flags") == FieldId::servo_flags);
+    assert(field_id_from_name("server.version") == FieldId::server_version);
+    assert(field_meta(FieldId::servo_flags) != 0);
 
-    model.runtime_publication.published_value_count.set(static_cast<uint32_t>(count), 800);
-    assert(model.runtime_publication.published_value_count.value == static_cast<uint32_t>(count));
+    const uint32_t published_count = 42u;
+    model.runtime_publication.published_value_count.set(published_count, 800);
+    assert(model.runtime_publication.published_value_count.value == published_count);
 
     return 0;
 }
