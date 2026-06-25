@@ -1,2 +1,3 @@
 #pragma once
-#include "../../support/ship_data_model_bridge/field_access.hpp"
+
+#include "mapping.hpp"
