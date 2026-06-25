@@ -1,2 +1,3 @@
 #pragma once
-#include "../../support/ship_data_model_bridge/optional_field_table.hpp"
+
+#include "field_table.hpp"
