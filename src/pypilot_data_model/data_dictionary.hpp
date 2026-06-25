@@ -46,6 +46,10 @@ inline const char* data_value_type_name(DataValueType type) {
     return "unknown";
 }
 
+inline size_t data_text_length(const char* text) {
+    return text ? strlen(text) : 0u;
+}
+
 inline bool copy_data_text(char* dst, size_t dst_size, const char* src) {
     if (!dst || dst_size == 0) return false;
     if (!src) { dst[0] = '\0'; return true; }
@@ -57,7 +61,7 @@ inline bool copy_data_text(char* dst, size_t dst_size, const char* src) {
 
 inline bool append_data_text(char* dst, size_t dst_size, const char* src) {
     if (!dst || !src || dst_size == 0) return false;
-    const size_t used = strlen(dst);
+    const size_t used = data_text_length(dst);
     if (used >= dst_size) return false;
     return copy_data_text(dst + used, dst_size - used, src);
 }
@@ -80,7 +84,7 @@ inline bool parse_data_number(const char* text, double& out) {
 
 inline bool strip_optional_data_quotes(const char* text, char* out, size_t out_size) {
     if (!text || !out || out_size == 0) return false;
-    const size_t len = strlen(text);
+    const size_t len = data_text_length(text);
     if (len >= 2 && text[0] == '"' && text[len - 1] == '"') {
         const size_t copy_len = len - 2;
         if (copy_len + 1 > out_size) return false;
