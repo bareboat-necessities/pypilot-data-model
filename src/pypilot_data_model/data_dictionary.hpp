@@ -2,6 +2,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 #include "field_id.hpp"
 
@@ -32,6 +33,63 @@ struct DataDictionaryEntry {
     bool writable;
     bool persistent;
 };
+
+inline const char* data_value_type_name(DataValueType type) {
+    switch (type) {
+    case DataValueType::boolean: return "bool";
+    case DataValueType::number: return "number";
+    case DataValueType::integer: return "number";
+    case DataValueType::string_value: return "string";
+    case DataValueType::mode: return "string";
+    case DataValueType::pilot_name: return "string";
+    }
+    return "unknown";
+}
+
+inline bool copy_data_text(char* dst, size_t dst_size, const char* src) {
+    if (!dst || dst_size == 0) return false;
+    if (!src) { dst[0] = '\0'; return true; }
+    size_t i = 0;
+    for (; i + 1 < dst_size && src[i]; ++i) dst[i] = src[i];
+    dst[i] = '\0';
+    return src[i] == '\0';
+}
+
+inline bool append_data_text(char* dst, size_t dst_size, const char* src) {
+    if (!dst || !src || dst_size == 0) return false;
+    const size_t used = strlen(dst);
+    if (used >= dst_size) return false;
+    return copy_data_text(dst + used, dst_size - used, src);
+}
+
+inline bool parse_data_bool(const char* text, bool& out) {
+    if (!text) return false;
+    if (strcmp(text, "true") == 0 || strcmp(text, "1") == 0) { out = true; return true; }
+    if (strcmp(text, "false") == 0 || strcmp(text, "0") == 0) { out = false; return true; }
+    return false;
+}
+
+inline bool parse_data_number(const char* text, double& out) {
+    if (!text || !*text) return false;
+    char* end = nullptr;
+    const double value = strtod(text, &end);
+    if (!end || (*end != '\0' && *end != '}' && *end != ',')) return false;
+    out = value;
+    return true;
+}
+
+inline bool strip_optional_data_quotes(const char* text, char* out, size_t out_size) {
+    if (!text || !out || out_size == 0) return false;
+    const size_t len = strlen(text);
+    if (len >= 2 && text[0] == '"' && text[len - 1] == '"') {
+        const size_t copy_len = len - 2;
+        if (copy_len + 1 > out_size) return false;
+        memcpy(out, text + 1, copy_len);
+        out[copy_len] = '\0';
+        return true;
+    }
+    return copy_data_text(out, out_size, text);
+}
 
 #define PYPILOT_DATA_DICTIONARY_ENTRIES(X) \
     X(FieldId::ap_enabled, "ap.enabled", boolean, command, true, true) \
