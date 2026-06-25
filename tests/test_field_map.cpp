@@ -85,16 +85,9 @@ int main() {
     assert(read_string(model, FieldId::status_last_error, text));
     assert(std::strcmp(text, "bad voltage") == 0);
 
-    size_t count = 0;
-    const RuntimeValueMetadata* runtime_values = core_runtime_values(count);
-    bool found_runtime_field = false;
-    for (size_t i = 0; i < count; ++i) {
-        if (std::strcmp(runtime_values[i].name, "servo.current") == 0 &&
-            runtime_values[i].field_id == FieldId::servo_current_a) {
-            found_runtime_field = true;
-        }
-    }
-    assert(found_runtime_field);
+    const FieldMeta* servo_current_meta = field_meta(FieldId::servo_current_a);
+    assert(servo_current_meta);
+    assert(std::strcmp(servo_current_meta->pypilot_name, "servo.current") == 0);
 
     assert(read_number(model, FieldId::pilot_basic_P, out));
     assert(out == 0.003f);
