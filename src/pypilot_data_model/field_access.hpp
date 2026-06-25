@@ -15,6 +15,28 @@ inline void copy_field_string(char* dst, size_t dst_size, const char* src) {
 }
 
 template<typename Real>
+inline void set_pilot_gain(PilotGain<Real>& gain, Real value) {
+    gain.gain.value = value;
+}
+
+template<typename Real>
+inline void set_pilot_contribution(PilotGain<Real>& gain, Real value, uint64_t now_us) {
+    gain.contribution.set(value, now_us);
+}
+
+template<typename Real>
+inline bool read_pilot_gain(const PilotGain<Real>& gain, Real& out) {
+    out = gain.gain.value;
+    return true;
+}
+
+template<typename Real>
+inline bool read_pilot_contribution(const PilotGain<Real>& gain, Real& out) {
+    out = gain.contribution.value;
+    return gain.contribution.valid;
+}
+
+template<typename Real>
 inline bool apply_number(DataModel<Real>& model, FieldId id, Real value, uint64_t now_us) {
     switch (id) {
     case FieldId::server_timestamp_s: model.server.timestamp_s.set(value, now_us); return true;
@@ -166,6 +188,59 @@ inline bool apply_number(DataModel<Real>& model, FieldId id, Real value, uint64_
     case FieldId::servo_telemetry_timeout_count: model.servo_telemetry.timeout_count.set(static_cast<uint32_t>(value), now_us); return true;
     case FieldId::servo_telemetry_reboot_count: model.servo_telemetry.controller_reboot_count.set(static_cast<uint32_t>(value), now_us); return true;
 
+    case FieldId::pilot_basic_P: set_pilot_gain(model.pilots.basic.P, value); return true;
+    case FieldId::pilot_basic_Pgain: set_pilot_contribution(model.pilots.basic.P, value, now_us); return true;
+    case FieldId::pilot_basic_D: set_pilot_gain(model.pilots.basic.D, value); return true;
+    case FieldId::pilot_basic_Dgain: set_pilot_contribution(model.pilots.basic.D, value, now_us); return true;
+    case FieldId::pilot_basic_DD: set_pilot_gain(model.pilots.basic.DD, value); return true;
+    case FieldId::pilot_basic_DDgain: set_pilot_contribution(model.pilots.basic.DD, value, now_us); return true;
+    case FieldId::pilot_basic_PR: set_pilot_gain(model.pilots.basic.PR, value); return true;
+    case FieldId::pilot_basic_PRgain: set_pilot_contribution(model.pilots.basic.PR, value, now_us); return true;
+    case FieldId::pilot_basic_FF: set_pilot_gain(model.pilots.basic.FF, value); return true;
+    case FieldId::pilot_basic_FFgain: set_pilot_contribution(model.pilots.basic.FF, value, now_us); return true;
+
+    case FieldId::pilot_wind_gps_wind_offset_deg: model.pilots.wind.gps_wind_offset_deg.set(value, now_us); return true;
+    case FieldId::pilot_wind_P: set_pilot_gain(model.pilots.wind.P, value); return true;
+    case FieldId::pilot_wind_Pgain: set_pilot_contribution(model.pilots.wind.P, value, now_us); return true;
+    case FieldId::pilot_wind_D: set_pilot_gain(model.pilots.wind.D, value); return true;
+    case FieldId::pilot_wind_Dgain: set_pilot_contribution(model.pilots.wind.D, value, now_us); return true;
+    case FieldId::pilot_wind_DD: set_pilot_gain(model.pilots.wind.DD, value); return true;
+    case FieldId::pilot_wind_DDgain: set_pilot_contribution(model.pilots.wind.DD, value, now_us); return true;
+    case FieldId::pilot_wind_WG: set_pilot_gain(model.pilots.wind.WG, value); return true;
+    case FieldId::pilot_wind_WGgain: set_pilot_contribution(model.pilots.wind.WG, value, now_us); return true;
+
+    case FieldId::pilot_absolute_P: set_pilot_gain(model.pilots.absolute.P, value); return true;
+    case FieldId::pilot_absolute_Pgain: set_pilot_contribution(model.pilots.absolute.P, value, now_us); return true;
+    case FieldId::pilot_absolute_I: set_pilot_gain(model.pilots.absolute.I, value); return true;
+    case FieldId::pilot_absolute_Igain: set_pilot_contribution(model.pilots.absolute.I, value, now_us); return true;
+    case FieldId::pilot_absolute_D: set_pilot_gain(model.pilots.absolute.D, value); return true;
+    case FieldId::pilot_absolute_Dgain: set_pilot_contribution(model.pilots.absolute.D, value, now_us); return true;
+    case FieldId::pilot_absolute_FF: set_pilot_gain(model.pilots.absolute.FF, value); return true;
+    case FieldId::pilot_absolute_FFgain: set_pilot_contribution(model.pilots.absolute.FF, value, now_us); return true;
+
+    case FieldId::pilot_rate_D: set_pilot_gain(model.pilots.rate.D, value); return true;
+    case FieldId::pilot_rate_Dgain: set_pilot_contribution(model.pilots.rate.D, value, now_us); return true;
+    case FieldId::pilot_rate_DD: set_pilot_gain(model.pilots.rate.DD, value); return true;
+    case FieldId::pilot_rate_DDgain: set_pilot_contribution(model.pilots.rate.DD, value, now_us); return true;
+    case FieldId::pilot_rate_FF: set_pilot_gain(model.pilots.rate.FF, value); return true;
+    case FieldId::pilot_rate_FFgain: set_pilot_contribution(model.pilots.rate.FF, value, now_us); return true;
+    case FieldId::pilot_rate_maxturnrate_deg_s: model.pilots.rate.max_turn_rate_deg_s.value = value; return true;
+    case FieldId::pilot_rate_turnraterate_deg_s2: model.pilots.rate.turn_rate_rate_deg_s2.value = value; return true;
+
+    case FieldId::pilot_simple_P: set_pilot_gain(model.pilots.simple.P, value); return true;
+    case FieldId::pilot_simple_Pgain: set_pilot_contribution(model.pilots.simple.P, value, now_us); return true;
+    case FieldId::pilot_simple_I: set_pilot_gain(model.pilots.simple.I, value); return true;
+    case FieldId::pilot_simple_Igain: set_pilot_contribution(model.pilots.simple.I, value, now_us); return true;
+    case FieldId::pilot_simple_D: set_pilot_gain(model.pilots.simple.D, value); return true;
+    case FieldId::pilot_simple_Dgain: set_pilot_contribution(model.pilots.simple.D, value, now_us); return true;
+
+    case FieldId::pilot_vmg_P: set_pilot_gain(model.pilots.vmg.P, value); return true;
+    case FieldId::pilot_vmg_Pgain: set_pilot_contribution(model.pilots.vmg.P, value, now_us); return true;
+    case FieldId::pilot_vmg_D: set_pilot_gain(model.pilots.vmg.D, value); return true;
+    case FieldId::pilot_vmg_Dgain: set_pilot_contribution(model.pilots.vmg.D, value, now_us); return true;
+    case FieldId::pilot_vmg_DD: set_pilot_gain(model.pilots.vmg.DD, value); return true;
+    case FieldId::pilot_vmg_DDgain: set_pilot_contribution(model.pilots.vmg.DD, value, now_us); return true;
+
     case FieldId::runtime_last_publish_period_s: model.runtime_publication.last_publish_period_s.set(value, now_us); return true;
     case FieldId::runtime_published_value_count: model.runtime_publication.published_value_count.set(static_cast<uint32_t>(value), now_us); return true;
     case FieldId::runtime_dropped_value_count: model.runtime_publication.dropped_value_count.set(static_cast<uint32_t>(value), now_us); return true;
@@ -215,7 +290,81 @@ inline bool read_number(const DataModel<Real>& model, FieldId id, Real& out) {
     case FieldId::servo_motor_temp_c: out = model.servo.motor_temp_c.value; return model.servo.motor_temp_c.valid;
     case FieldId::servo_flags: out = static_cast<Real>(model.servo.flags.value); return true;
     case FieldId::servo_faults: out = static_cast<Real>(model.servo.faults.value); return true;
+
+    case FieldId::servo_telemetry_command_norm: out = model.servo_telemetry.command_norm.value; return model.servo_telemetry.command_norm.valid;
+    case FieldId::servo_telemetry_raw_command_norm: out = model.servo_telemetry.raw_command_norm.value; return model.servo_telemetry.raw_command_norm.valid;
+    case FieldId::servo_telemetry_position_deg: out = model.servo_telemetry.position_deg.value; return model.servo_telemetry.position_deg.valid;
+    case FieldId::servo_telemetry_position_command_deg: out = model.servo_telemetry.position_command_deg.value; return model.servo_telemetry.position_command_deg.valid;
+    case FieldId::servo_telemetry_speed_norm: out = model.servo_telemetry.speed_norm.value; return model.servo_telemetry.speed_norm.valid;
+    case FieldId::servo_telemetry_duty_pct: out = model.servo_telemetry.duty_pct.value; return model.servo_telemetry.duty_pct.valid;
+    case FieldId::servo_telemetry_voltage_v: out = model.servo_telemetry.voltage_v.value; return model.servo_telemetry.voltage_v.valid;
+    case FieldId::servo_telemetry_current_a: out = model.servo_telemetry.current_a.value; return model.servo_telemetry.current_a.valid;
+    case FieldId::servo_telemetry_current_noise_a: out = model.servo_telemetry.current_noise_a.value; return model.servo_telemetry.current_noise_a.valid;
+    case FieldId::servo_telemetry_watts_w: out = model.servo_telemetry.watts_w.value; return model.servo_telemetry.watts_w.valid;
+    case FieldId::servo_telemetry_controller_temp_c: out = model.servo_telemetry.controller_temp_c.value; return model.servo_telemetry.controller_temp_c.valid;
+    case FieldId::servo_telemetry_motor_temp_c: out = model.servo_telemetry.motor_temp_c.value; return model.servo_telemetry.motor_temp_c.valid;
+    case FieldId::servo_telemetry_rudder_feedback_deg: out = model.servo_telemetry.rudder_feedback_deg.value; return model.servo_telemetry.rudder_feedback_deg.valid;
+    case FieldId::servo_telemetry_packet_count: out = static_cast<Real>(model.servo_telemetry.packet_count.value); return model.servo_telemetry.packet_count.valid;
+    case FieldId::servo_telemetry_bad_packet_count: out = static_cast<Real>(model.servo_telemetry.bad_packet_count.value); return model.servo_telemetry.bad_packet_count.valid;
+    case FieldId::servo_telemetry_timeout_count: out = static_cast<Real>(model.servo_telemetry.timeout_count.value); return model.servo_telemetry.timeout_count.valid;
+    case FieldId::servo_telemetry_reboot_count: out = static_cast<Real>(model.servo_telemetry.controller_reboot_count.value); return model.servo_telemetry.controller_reboot_count.valid;
+
+    case FieldId::pilot_basic_P: return read_pilot_gain(model.pilots.basic.P, out);
+    case FieldId::pilot_basic_Pgain: return read_pilot_contribution(model.pilots.basic.P, out);
+    case FieldId::pilot_basic_D: return read_pilot_gain(model.pilots.basic.D, out);
+    case FieldId::pilot_basic_Dgain: return read_pilot_contribution(model.pilots.basic.D, out);
+    case FieldId::pilot_basic_DD: return read_pilot_gain(model.pilots.basic.DD, out);
+    case FieldId::pilot_basic_DDgain: return read_pilot_contribution(model.pilots.basic.DD, out);
+    case FieldId::pilot_basic_PR: return read_pilot_gain(model.pilots.basic.PR, out);
+    case FieldId::pilot_basic_PRgain: return read_pilot_contribution(model.pilots.basic.PR, out);
+    case FieldId::pilot_basic_FF: return read_pilot_gain(model.pilots.basic.FF, out);
+    case FieldId::pilot_basic_FFgain: return read_pilot_contribution(model.pilots.basic.FF, out);
+
+    case FieldId::pilot_wind_gps_wind_offset_deg: out = model.pilots.wind.gps_wind_offset_deg.value; return model.pilots.wind.gps_wind_offset_deg.valid;
+    case FieldId::pilot_wind_P: return read_pilot_gain(model.pilots.wind.P, out);
+    case FieldId::pilot_wind_Pgain: return read_pilot_contribution(model.pilots.wind.P, out);
+    case FieldId::pilot_wind_D: return read_pilot_gain(model.pilots.wind.D, out);
+    case FieldId::pilot_wind_Dgain: return read_pilot_contribution(model.pilots.wind.D, out);
+    case FieldId::pilot_wind_DD: return read_pilot_gain(model.pilots.wind.DD, out);
+    case FieldId::pilot_wind_DDgain: return read_pilot_contribution(model.pilots.wind.DD, out);
+    case FieldId::pilot_wind_WG: return read_pilot_gain(model.pilots.wind.WG, out);
+    case FieldId::pilot_wind_WGgain: return read_pilot_contribution(model.pilots.wind.WG, out);
+
+    case FieldId::pilot_absolute_P: return read_pilot_gain(model.pilots.absolute.P, out);
+    case FieldId::pilot_absolute_Pgain: return read_pilot_contribution(model.pilots.absolute.P, out);
+    case FieldId::pilot_absolute_I: return read_pilot_gain(model.pilots.absolute.I, out);
+    case FieldId::pilot_absolute_Igain: return read_pilot_contribution(model.pilots.absolute.I, out);
+    case FieldId::pilot_absolute_D: return read_pilot_gain(model.pilots.absolute.D, out);
+    case FieldId::pilot_absolute_Dgain: return read_pilot_contribution(model.pilots.absolute.D, out);
+    case FieldId::pilot_absolute_FF: return read_pilot_gain(model.pilots.absolute.FF, out);
+    case FieldId::pilot_absolute_FFgain: return read_pilot_contribution(model.pilots.absolute.FF, out);
+
+    case FieldId::pilot_rate_D: return read_pilot_gain(model.pilots.rate.D, out);
+    case FieldId::pilot_rate_Dgain: return read_pilot_contribution(model.pilots.rate.D, out);
+    case FieldId::pilot_rate_DD: return read_pilot_gain(model.pilots.rate.DD, out);
+    case FieldId::pilot_rate_DDgain: return read_pilot_contribution(model.pilots.rate.DD, out);
+    case FieldId::pilot_rate_FF: return read_pilot_gain(model.pilots.rate.FF, out);
+    case FieldId::pilot_rate_FFgain: return read_pilot_contribution(model.pilots.rate.FF, out);
+    case FieldId::pilot_rate_maxturnrate_deg_s: out = model.pilots.rate.max_turn_rate_deg_s.value; return true;
+    case FieldId::pilot_rate_turnraterate_deg_s2: out = model.pilots.rate.turn_rate_rate_deg_s2.value; return true;
+
+    case FieldId::pilot_simple_P: return read_pilot_gain(model.pilots.simple.P, out);
+    case FieldId::pilot_simple_Pgain: return read_pilot_contribution(model.pilots.simple.P, out);
+    case FieldId::pilot_simple_I: return read_pilot_gain(model.pilots.simple.I, out);
+    case FieldId::pilot_simple_Igain: return read_pilot_contribution(model.pilots.simple.I, out);
+    case FieldId::pilot_simple_D: return read_pilot_gain(model.pilots.simple.D, out);
+    case FieldId::pilot_simple_Dgain: return read_pilot_contribution(model.pilots.simple.D, out);
+
+    case FieldId::pilot_vmg_P: return read_pilot_gain(model.pilots.vmg.P, out);
+    case FieldId::pilot_vmg_Pgain: return read_pilot_contribution(model.pilots.vmg.P, out);
+    case FieldId::pilot_vmg_D: return read_pilot_gain(model.pilots.vmg.D, out);
+    case FieldId::pilot_vmg_Dgain: return read_pilot_contribution(model.pilots.vmg.D, out);
+    case FieldId::pilot_vmg_DD: return read_pilot_gain(model.pilots.vmg.DD, out);
+    case FieldId::pilot_vmg_DDgain: return read_pilot_contribution(model.pilots.vmg.DD, out);
+
+    case FieldId::runtime_last_publish_period_s: out = model.runtime_publication.last_publish_period_s.value; return model.runtime_publication.last_publish_period_s.valid;
     case FieldId::runtime_published_value_count: out = static_cast<Real>(model.runtime_publication.published_value_count.value); return model.runtime_publication.published_value_count.valid;
+    case FieldId::runtime_dropped_value_count: out = static_cast<Real>(model.runtime_publication.dropped_value_count.value); return model.runtime_publication.dropped_value_count.valid;
     default: return false;
     }
 }
