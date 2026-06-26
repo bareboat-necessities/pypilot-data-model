@@ -17,12 +17,29 @@ inline void copy_data_text(char* out, size_t out_size, const char* text) {
     out[i] = '\0';
 }
 
+inline bool data_model_name_starts_with(const char* text, const char* prefix) {
+    if (!text || !prefix) return false;
+    return strncmp(text, prefix, strlen(prefix)) == 0;
+}
+
+inline bool looks_like_pypilot_runtime_name(const char* name) {
+    return data_model_name_starts_with(name, "ap.") ||
+           data_model_name_starts_with(name, "imu.") ||
+           data_model_name_starts_with(name, "gps.") ||
+           data_model_name_starts_with(name, "wind.") ||
+           data_model_name_starts_with(name, "truewind.") ||
+           data_model_name_starts_with(name, "apb.") ||
+           data_model_name_starts_with(name, "water.") ||
+           data_model_name_starts_with(name, "rudder.") ||
+           data_model_name_starts_with(name, "servo.");
+}
+
 inline FieldId field_id_from_name(const char* name) {
     if (!name) return FieldId::unknown;
     for (size_t i = 0; i < field_definition_count; ++i) {
         if (strcmp(field_definitions[i].pypilot_name, name) == 0) return field_definitions[i].id;
     }
-    return FieldId::unknown;
+    return looks_like_pypilot_runtime_name(name) ? FieldId::compat_value : FieldId::unknown;
 }
 
 inline const FieldMeta* field_meta(FieldId id) {
@@ -46,6 +63,7 @@ inline bool apply_number(DataModel<Real>& model, FieldId id, Real value, uint64_
     case FieldId::servo_telemetry_current_a: model.servo_telemetry.current_a.set(value, now_us); return true;
     case FieldId::pilot_basic_P: model.pilots.basic.P.gain.value = value; return true;
     case FieldId::pilot_basic_Pgain: model.pilots.basic.P.contribution.set(value, now_us); return true;
+    case FieldId::imu_calibration_heading_offset_deg: model.imu.heading_offset_deg.value = value; return true;
     default: return false;
     }
 }
@@ -57,6 +75,7 @@ inline bool read_number(const DataModel<Real>& model, FieldId id, Real& out) {
     case FieldId::ap_heading_deg: out = model.ap.heading_deg.value; return model.ap.heading_deg.valid;
     case FieldId::servo_telemetry_current_a: out = model.servo_telemetry.current_a.value; return model.servo_telemetry.current_a.valid;
     case FieldId::pilot_basic_P: out = model.pilots.basic.P.gain.value; return true;
+    case FieldId::imu_calibration_heading_offset_deg: out = model.imu.heading_offset_deg.value; return true;
     default: return false;
     }
 }
