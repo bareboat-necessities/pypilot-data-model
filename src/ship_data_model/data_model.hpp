@@ -9,7 +9,6 @@
 #include "profile.hpp"
 #include "server.hpp"
 #include "status.hpp"
-#include "imu_calibration.hpp"
 #include "pilot_io.hpp"
 #include "runtime_publication.hpp"
 
