@@ -25,6 +25,12 @@ inline bool pilot_from_name(const char* name, PilotName& out) {
     else if (strcmp(name, "absolute") == 0) out = PilotName::absolute;
     else if (strcmp(name, "wind") == 0) out = PilotName::wind;
     else if (strcmp(name, "gps") == 0) out = PilotName::gps;
+    else if (strcmp(name, "rate") == 0) out = PilotName::rate;
+    else if (strcmp(name, "simple") == 0) out = PilotName::simple;
+    else if (strcmp(name, "vmg") == 0) out = PilotName::vmg;
+    else if (strcmp(name, "deadzone") == 0) out = PilotName::deadzone;
+    else if (strcmp(name, "fuzzy") == 0) out = PilotName::fuzzy;
+    else if (strcmp(name, "learning") == 0) out = PilotName::learning;
     else return false;
     return true;
 }
@@ -49,7 +55,7 @@ struct AutopilotServerData {
 
 template<typename Real = float>
 struct AutopilotStatusData {
-    Stamped<uint32_t> health;
+    Stamped<SystemHealth> health;
     Stamped<uint32_t> faults;
     Stamped<uint32_t> warnings;
     Stamped<Real> uptime_s;
@@ -123,8 +129,9 @@ struct PilotsData {
 
 template<typename Real = float>
 struct PilotCommandData {
-    Stamped<uint32_t> source;
+    Stamped<PilotCommandSource> source;
     TimedCommand<Real> heading_deg;
+    TimedCommand<Real> heading_command_deg;
     TimedCommand<Real> heading_rate_deg_s;
     TimedCommand<Real> servo_norm;
     TimedCommand<Real> servo_position_deg;
@@ -144,6 +151,7 @@ struct PilotOutputData {
     Stamped<bool> saturated;
     Stamped<bool> fault;
     char active_name[32] = {0};
+    char active_pilot_name[32] = {0};
 };
 
 template<typename Real = float>
