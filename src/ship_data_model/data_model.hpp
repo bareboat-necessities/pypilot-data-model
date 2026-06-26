@@ -5,7 +5,6 @@
 #include "nav_data.hpp"
 #include "wind_sea_data.hpp"
 #include "steering_data.hpp"
-#include "runtime_publication.hpp"
 
 namespace ship_data_model {
 
