@@ -32,16 +32,16 @@ enum class FieldType {
     integer,
     boolean,
     string_value,
+    json_value,
     mode_enum,
     pilot_enum,
     source_enum,
     rudder_calibration_enum,
     servo_state_enum,
-    object_value,
-    vector3_value,
-    quaternion_value,
     tack_state_enum,
     tack_direction_enum,
+    vector3_value,
+    quaternion_value,
     unknown_value
 };
 
@@ -55,330 +55,221 @@ struct FieldMeta {
     bool pilot_specific;
 };
 
-#define FIELD_CMD_NUMBER(name) {FieldId::compat_value, name, "", FieldType::number, true, false, false},
-#define FIELD_CMD_NUMBER_DEG(name) {FieldId::compat_value, name, "deg", FieldType::number, true, false, false},
-#define FIELD_CMD_TACK_DIRECTION_ENUM(name) {FieldId::compat_value, name, "", FieldType::tack_direction_enum, true, false, false},
-#define FIELD_CMD_TACK_STATE_ENUM(name) {FieldId::compat_value, name, "", FieldType::tack_state_enum, true, false, false},
-#define FIELD_PILOT_RW_NUMBER(name) {FieldId::compat_value, name, "", FieldType::number, true, true, true},
-#define FIELD_PILOT_RW_NUMBER_DEG(name) {FieldId::compat_value, name, "deg", FieldType::number, true, true, true},
-#define FIELD_PILOT_RW_NUMBER_DEG_S(name) {FieldId::compat_value, name, "deg/s", FieldType::number, true, true, true},
-#define FIELD_RO_BOOLEAN(name) {FieldId::compat_value, name, "", FieldType::boolean, false, false, false},
-#define FIELD_RO_INTEGER(name) {FieldId::compat_value, name, "", FieldType::integer, false, false, false},
-#define FIELD_RO_NUMBER(name) {FieldId::compat_value, name, "", FieldType::number, false, false, false},
-#define FIELD_RO_NUMBER_AH(name) {FieldId::compat_value, name, "Ah", FieldType::number, false, false, false},
-#define FIELD_RO_NUMBER_C(name) {FieldId::compat_value, name, "C", FieldType::number, false, false, false},
-#define FIELD_RO_NUMBER_DEG(name) {FieldId::compat_value, name, "deg", FieldType::number, false, false, false},
-#define FIELD_RO_NUMBER_DEG_S(name) {FieldId::compat_value, name, "deg/s", FieldType::number, false, false, false},
-#define FIELD_RO_NUMBER_HZ(name) {FieldId::compat_value, name, "Hz", FieldType::number, false, false, false},
-#define FIELD_RO_NUMBER_KN(name) {FieldId::compat_value, name, "kn", FieldType::number, false, false, false},
-#define FIELD_RO_NUMBER_NMI(name) {FieldId::compat_value, name, "nmi", FieldType::number, false, false, false},
-#define FIELD_RO_NUMBER_S(name) {FieldId::compat_value, name, "s", FieldType::number, false, false, false},
-#define FIELD_RO_NUMBER_V(name) {FieldId::compat_value, name, "V", FieldType::number, false, false, false},
-#define FIELD_RO_NUMBER_W(name) {FieldId::compat_value, name, "W", FieldType::number, false, false, false},
-#define FIELD_RO_OBJECT_VALUE(name) {FieldId::compat_value, name, "", FieldType::object_value, false, false, false},
-#define FIELD_RO_QUATERNION_VALUE(name) {FieldId::compat_value, name, "", FieldType::quaternion_value, false, false, false},
-#define FIELD_RO_VECTOR3_VALUE(name) {FieldId::compat_value, name, "", FieldType::vector3_value, false, false, false},
-#define FIELD_RW_BOOLEAN(name) {FieldId::compat_value, name, "", FieldType::boolean, true, true, false},
-#define FIELD_RW_MODE_ENUM(name) {FieldId::compat_value, name, "", FieldType::mode_enum, true, true, false},
-#define FIELD_RW_NUMBER(name) {FieldId::compat_value, name, "", FieldType::number, true, true, false},
-#define FIELD_RW_NUMBER_A(name) {FieldId::compat_value, name, "A", FieldType::number, true, true, false},
-#define FIELD_RW_NUMBER_C(name) {FieldId::compat_value, name, "C", FieldType::number, true, true, false},
-#define FIELD_RW_NUMBER_DEG(name) {FieldId::compat_value, name, "deg", FieldType::number, true, true, false},
-#define FIELD_RW_NUMBER_DEG_NMI(name) {FieldId::compat_value, name, "deg/nmi", FieldType::number, true, true, false},
-#define FIELD_RW_NUMBER_DEG_S(name) {FieldId::compat_value, name, "deg/s", FieldType::number, true, true, false},
-#define FIELD_RW_NUMBER_HZ(name) {FieldId::compat_value, name, "Hz", FieldType::number, true, true, false},
-#define FIELD_RW_NUMBER_M(name) {FieldId::compat_value, name, "m", FieldType::number, true, true, false},
-#define FIELD_RW_NUMBER_S(name) {FieldId::compat_value, name, "s", FieldType::number, true, true, false},
-#define FIELD_RW_OBJECT_VALUE(name) {FieldId::compat_value, name, "", FieldType::object_value, true, true, false},
-#define FIELD_RW_QUATERNION_VALUE(name) {FieldId::compat_value, name, "", FieldType::quaternion_value, true, true, false},
-#define FIELD_RW_SOURCE_ENUM(name) {FieldId::compat_value, name, "", FieldType::source_enum, true, true, false},
-
+// Field metadata mirrors pypilot runtime Value registrations.
+// Names with dedicated DataModel storage use a concrete FieldId.
+// Other known pypilot runtime names use compat_value but still keep their
+// own type, unit, writable, persistent, and pilot-specific metadata.
 static constexpr FieldMeta field_definitions[] = {
     {FieldId::compat_value, "compat.value", "", FieldType::unknown_value, false, false, false},
     {FieldId::server_version, "server.version", "", FieldType::string_value, false, false, false},
-    {FieldId::server_version, "ap.version", "", FieldType::string_value, false, false, false},
     {FieldId::server_uptime_s, "server.uptime", "s", FieldType::number, false, false, false},
     {FieldId::status_last_error, "status.last_error", "", FieldType::string_value, false, false, false},
-    {FieldId::ap_enabled, "ap.enabled", "", FieldType::boolean, true, true, false},
-    {FieldId::ap_mode, "ap.mode", "", FieldType::mode_enum, true, true, false},
-    {FieldId::ap_pilot, "ap.pilot", "", FieldType::pilot_enum, true, true, false},
-    {FieldId::ap_heading_deg, "ap.heading", "deg", FieldType::number, false, false, false},
     {FieldId::ap_tack_progress_0_1, "ap.tack.progress", "", FieldType::number, false, false, false},
-    {FieldId::wind_source, "wind.source", "", FieldType::source_enum, true, true, false},
-    {FieldId::wind_filtered_direction_deg, "wind.filtered_direction", "deg", FieldType::number, false, false, false},
-    {FieldId::servo_current_a, "servo.current", "A", FieldType::number, false, false, false},
     {FieldId::servo_telemetry_current_a, "servo.telemetry.current", "A", FieldType::number, false, false, false},
-    {FieldId::servo_flags, "servo.flags", "", FieldType::integer, false, false, false},
-    {FieldId::servo_telemetry_state, "servo.state", "", FieldType::servo_state_enum, false, false, false},
-    {FieldId::rudder_calibration_state, "rudder.calibration_state", "", FieldType::rudder_calibration_enum, true, true, false},
+    {FieldId::server_version, "ap.version", "", FieldType::string_value, false, false, false},
+    {FieldId::compat_value, "ap.preferred_mode", "", FieldType::mode_enum, false, false, false},
+    {FieldId::ap_mode, "ap.mode", "", FieldType::mode_enum, true, true, false},
+    {FieldId::compat_value, "ap.modes", "", FieldType::json_value, false, false, false},
+    {FieldId::compat_value, "ap.gps_and_nav_modes", "", FieldType::boolean, true, true, false},
+    {FieldId::compat_value, "ap.heading_command", "deg", FieldType::number, true, false, false},
+    {FieldId::ap_enabled, "ap.enabled", "", FieldType::boolean, true, false, false},
+    {FieldId::ap_heading_deg, "ap.heading", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "ap.heading_error", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "ap.heading_error_int", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "ap.heading_command_rate", "deg/s", FieldType::number, false, false, false},
+    {FieldId::ap_pilot, "ap.pilot", "", FieldType::pilot_enum, true, true, false},
+    {FieldId::compat_value, "ap.gps_compass_offset", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "ap.wind_compass_offset", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "ap.true_wind_compass_offset", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "ap.wind_offset_filter", "", FieldType::number, true, true, false},
+    {FieldId::compat_value, "ap.runtime", "s", FieldType::number, false, false, false},
+    {FieldId::compat_value, "ap.timings", "", FieldType::json_value, false, false, false},
+    {FieldId::compat_value, "imu.rate", "Hz", FieldType::integer, true, true, false},
+    {FieldId::compat_value, "imu.frequency", "Hz", FieldType::number, false, false, false},
+    {FieldId::compat_value, "imu.alignmentQ", "", FieldType::quaternion_value, true, true, false},
     {FieldId::imu_calibration_heading_offset_deg, "imu.heading_offset", "deg", FieldType::number, true, true, false},
+    {FieldId::compat_value, "imu.alignmentCounter", "", FieldType::integer, true, false, false},
+    {FieldId::compat_value, "imu.uptime", "s", FieldType::number, false, false, false},
+    {FieldId::compat_value, "imu.warning", "", FieldType::string_value, false, false, false},
+    {FieldId::compat_value, "imu.heading_lowpass_constant", "", FieldType::number, true, false, false},
+    {FieldId::compat_value, "imu.headingrate_lowpass_constant", "", FieldType::number, true, false, false},
+    {FieldId::compat_value, "imu.headingraterate_lowpass_constant", "", FieldType::number, true, false, false},
+    {FieldId::compat_value, "imu.accel", "", FieldType::vector3_value, false, false, false},
+    {FieldId::compat_value, "imu.gyro", "", FieldType::vector3_value, false, false, false},
+    {FieldId::compat_value, "imu.compass", "", FieldType::vector3_value, false, false, false},
+    {FieldId::compat_value, "imu.accel.residuals", "", FieldType::vector3_value, false, false, false},
+    {FieldId::compat_value, "imu.pitch", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "imu.roll", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "imu.fusionQPose", "", FieldType::quaternion_value, false, false, false},
+    {FieldId::compat_value, "imu.heading", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "imu.heading_lowpass", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "imu.headingrate", "deg/s", FieldType::number, false, false, false},
+    {FieldId::compat_value, "imu.headingrate_lowpass", "deg/s", FieldType::number, false, false, false},
+    {FieldId::compat_value, "imu.headingraterate", "deg/s", FieldType::number, false, false, false},
+    {FieldId::compat_value, "imu.headingraterate_lowpass", "deg/s", FieldType::number, false, false, false},
+    {FieldId::compat_value, "imu.pitchrate", "deg/s", FieldType::number, false, false, false},
+    {FieldId::compat_value, "imu.rollrate", "deg/s", FieldType::number, false, false, false},
+    {FieldId::compat_value, "imu.gyrobias", "", FieldType::vector3_value, false, true, false},
+    {FieldId::compat_value, "gps.source", "", FieldType::source_enum, false, false, false},
+    {FieldId::compat_value, "gps.rate", "Hz", FieldType::number, true, true, false},
+    {FieldId::compat_value, "gps.track", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "gps.speed", "kn", FieldType::number, false, false, false},
+    {FieldId::compat_value, "gps.fix", "", FieldType::json_value, false, false, false},
+    {FieldId::compat_value, "gps.leeway_ground", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "gps.compass_error", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "gps.declination", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "gps.alignmentCounter", "", FieldType::integer, true, false, false},
+    {FieldId::wind_source, "wind.source", "", FieldType::source_enum, false, false, false},
+    {FieldId::compat_value, "wind.rate", "Hz", FieldType::number, true, true, false},
+    {FieldId::compat_value, "wind.direction", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "wind.speed", "kn", FieldType::number, false, false, false},
+    {FieldId::compat_value, "wind.offset", "deg", FieldType::number, true, true, false},
+    {FieldId::compat_value, "wind.sensors_height", "m", FieldType::number, true, true, false},
+    {FieldId::compat_value, "wind.filtered_speed", "kn", FieldType::number, false, false, false},
+    {FieldId::wind_filtered_direction_deg, "wind.filtered_direction", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "wind.filter_constant", "", FieldType::number, true, true, false},
+    {FieldId::compat_value, "wind.filter_factor", "", FieldType::number, false, false, false},
+    {FieldId::compat_value, "truewind.source", "", FieldType::source_enum, false, false, false},
+    {FieldId::compat_value, "truewind.rate", "Hz", FieldType::number, true, true, false},
+    {FieldId::compat_value, "truewind.direction", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "truewind.speed", "kn", FieldType::number, false, false, false},
+    {FieldId::compat_value, "truewind.offset", "deg", FieldType::number, true, true, false},
+    {FieldId::compat_value, "truewind.sensors_height", "m", FieldType::number, true, true, false},
+    {FieldId::compat_value, "truewind.filtered_speed", "kn", FieldType::number, false, false, false},
+    {FieldId::compat_value, "truewind.filtered_direction", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "truewind.filter_constant", "", FieldType::number, true, true, false},
+    {FieldId::compat_value, "truewind.filter_factor", "", FieldType::number, false, false, false},
+    {FieldId::compat_value, "apb.source", "", FieldType::source_enum, false, false, false},
+    {FieldId::compat_value, "apb.track", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "apb.xte", "nmi", FieldType::number, false, false, false},
+    {FieldId::compat_value, "apb.xte.gain", "deg/nmi", FieldType::number, true, true, false},
+    {FieldId::compat_value, "water.source", "", FieldType::source_enum, false, false, false},
+    {FieldId::compat_value, "water.rate", "Hz", FieldType::number, true, true, false},
+    {FieldId::compat_value, "water.speed", "kn", FieldType::number, false, false, false},
+    {FieldId::compat_value, "water.leeway", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "water.leeway.source", "", FieldType::source_enum, false, false, false},
+    {FieldId::compat_value, "water.current.speed", "kn", FieldType::number, false, false, false},
+    {FieldId::compat_value, "water.current.direction", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "water.wind.speed", "kn", FieldType::number, false, false, false},
+    {FieldId::compat_value, "water.wind.direction", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "rudder.source", "", FieldType::source_enum, false, false, false},
+    {FieldId::compat_value, "rudder.rate", "Hz", FieldType::number, true, false, false},
+    {FieldId::compat_value, "rudder.angle", "deg", FieldType::number, false, false, false},
+    {FieldId::compat_value, "rudder.speed", "deg/s", FieldType::number, false, false, false},
+    {FieldId::compat_value, "rudder.offset", "deg", FieldType::number, false, true, false},
+    {FieldId::compat_value, "rudder.scale", "", FieldType::number, false, true, false},
+    {FieldId::compat_value, "rudder.nonlinearity", "", FieldType::number, false, true, false},
+    {FieldId::rudder_calibration_state, "rudder.calibration_state", "", FieldType::rudder_calibration_enum, true, false, false},
+    {FieldId::compat_value, "rudder.range", "deg", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.calibration", "", FieldType::json_value, false, false, false},
+    {FieldId::compat_value, "servo.position_command", "", FieldType::number, true, false, false},
+    {FieldId::compat_value, "servo.command", "", FieldType::number, true, false, false},
+    {FieldId::compat_value, "servo.speed_gain", "", FieldType::number, true, false, false},
+    {FieldId::compat_value, "servo.duty", "", FieldType::number, false, false, false},
+    {FieldId::compat_value, "servo.faults", "", FieldType::integer, true, true, false},
+    {FieldId::compat_value, "servo.voltage", "V", FieldType::number, false, false, false},
+    {FieldId::servo_current_a, "servo.current", "A", FieldType::number, false, false, false},
+    {FieldId::compat_value, "servo.current.noise", "A", FieldType::number, false, false, false},
+    {FieldId::compat_value, "servo.controller_temp", "C", FieldType::number, false, false, false},
+    {FieldId::compat_value, "servo.motor_temp", "C", FieldType::number, false, false, false},
+    {FieldId::compat_value, "servo.engaged", "", FieldType::boolean, false, false, false},
+    {FieldId::compat_value, "servo.max_current", "A", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.current.factor", "", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.current.offset", "A", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.voltage.factor", "", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.voltage.offset", "V", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.max_controller_temp", "C", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.max_motor_temp", "C", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.max_slew_speed", "%", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.max_slew_slow", "%", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.gain", "", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.clutch_pwm", "%", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.use_brake", "", FieldType::boolean, true, true, false},
+    {FieldId::compat_value, "servo.period", "s", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.compensate_current", "", FieldType::boolean, true, true, false},
+    {FieldId::compat_value, "servo.compensate_voltage", "", FieldType::boolean, true, true, false},
+    {FieldId::compat_value, "servo.amp_hours", "Ah", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.watts", "W", FieldType::number, false, false, false},
+    {FieldId::compat_value, "servo.speed", "", FieldType::number, false, false, false},
+    {FieldId::compat_value, "servo.speed.min", "%", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.speed.max", "%", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.position", "", FieldType::number, false, false, false},
+    {FieldId::compat_value, "servo.position.p", "", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.position.i", "", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.position.d", "", FieldType::number, true, true, false},
+    {FieldId::compat_value, "servo.raw_command", "", FieldType::number, false, false, false},
+    {FieldId::compat_value, "servo.use_eeprom", "", FieldType::boolean, false, true, false},
+    {FieldId::servo_telemetry_state, "servo.state", "", FieldType::string_value, false, false, false},
+    {FieldId::compat_value, "servo.controller", "", FieldType::string_value, false, false, false},
+    {FieldId::servo_flags, "servo.flags", "", FieldType::integer, false, false, false},
+    {FieldId::compat_value, "ap.tack.state", "", FieldType::tack_state_enum, true, false, false},
+    {FieldId::compat_value, "ap.tack.timeout", "s", FieldType::number, false, false, false},
+    {FieldId::compat_value, "ap.tack.delay", "s", FieldType::number, true, true, false},
+    {FieldId::compat_value, "ap.tack.angle", "deg", FieldType::number, true, true, false},
+    {FieldId::compat_value, "ap.tack.rate", "deg/s", FieldType::number, true, true, false},
+    {FieldId::compat_value, "ap.tack.threshold", "%", FieldType::number, true, true, false},
+    {FieldId::compat_value, "ap.tack.count", "", FieldType::integer, true, true, false},
+    {FieldId::compat_value, "ap.tack.direction", "", FieldType::tack_direction_enum, true, false, false},
+    {FieldId::compat_value, "ap.tack.use_heel", "", FieldType::boolean, true, true, false},
+    {FieldId::compat_value, "ap.tack.use_wind_direction", "", FieldType::boolean, true, true, false},
     {FieldId::pilot_basic_P, "ap.pilot.basic.P", "", FieldType::number, true, true, true},
+    {FieldId::pilot_basic_Pgain, "ap.pilot.basic.Pgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.basic.D", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.basic.Dgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.basic.DD", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.basic.DDgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.basic.PR", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.basic.PRgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.basic.FF", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.basic.FFgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.wind.gps_wind_offset", "deg", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.wind.P", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.wind.Pgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.wind.D", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.wind.Dgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.wind.DD", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.wind.DDgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.wind.WG", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.wind.WGgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.absolute.P", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.absolute.Pgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.absolute.I", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.absolute.Igain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.absolute.D", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.absolute.Dgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.absolute.FF", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.absolute.FFgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.rate.D", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.rate.Dgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.rate.DD", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.rate.DDgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.rate.FF", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.rate.FFgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.rate.maxturnrate", "deg/s", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.rate.turnraterate", "deg/s", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.simple.P", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.simple.Pgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.simple.I", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.simple.Igain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.simple.D", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.simple.Dgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.vmg.P", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.vmg.Pgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.vmg.D", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.vmg.Dgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.vmg.DD", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.vmg.DDgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.deadzone.deadzone", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.fuzzy.learningP", "", FieldType::number, true, false, true},
+    {FieldId::compat_value, "ap.pilot.fuzzy.learningD", "", FieldType::number, true, false, true},
+    {FieldId::compat_value, "ap.pilot.fuzzy.seastate", "", FieldType::number, false, false, true},
     {FieldId::pilot_basic_P, "ap.pilot.learning.P", "", FieldType::number, true, true, true},
-    {FieldId::pilot_basic_Pgain, "ap.pilot.basic.Pgain", "", FieldType::number, true, true, true},
-    {FieldId::pilot_basic_Pgain, "ap.pilot.learning.Pgain", "", FieldType::number, true, true, true},
-
-    FIELD_CMD_NUMBER("ap.heading_command_rate")
-    FIELD_CMD_NUMBER("servo.position_command")
-    FIELD_CMD_NUMBER("servo.command")
-
-    FIELD_CMD_NUMBER_DEG("ap.heading_command")
-
-    FIELD_CMD_TACK_DIRECTION_ENUM("ap.tack.direction")
-
-    FIELD_CMD_TACK_STATE_ENUM("ap.tack.state")
-
-    FIELD_PILOT_RW_NUMBER("ap.pilot.basic.D")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.basic.Dgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.basic.DD")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.basic.DDgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.basic.PR")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.basic.PRgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.basic.FF")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.basic.FFgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.wind.P")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.wind.Pgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.wind.D")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.wind.Dgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.wind.DD")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.wind.DDgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.wind.WG")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.wind.WGgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.absolute.P")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.absolute.Pgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.absolute.I")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.absolute.Igain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.absolute.D")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.absolute.Dgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.absolute.FF")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.absolute.FFgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.rate.D")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.rate.Dgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.rate.DD")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.rate.DDgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.rate.FF")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.rate.FFgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.simple.P")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.simple.Pgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.simple.I")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.simple.Igain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.simple.D")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.simple.Dgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.vmg.P")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.vmg.Pgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.vmg.D")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.vmg.Dgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.vmg.DD")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.vmg.DDgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.deadzone.deadzone")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.fuzzy.learningP")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.fuzzy.learningD")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.fuzzy.seastate")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.learning.D")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.learning.Dgain")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.learning.W")
-    FIELD_PILOT_RW_NUMBER("ap.pilot.learning.Wgain")
-
-    FIELD_PILOT_RW_NUMBER_DEG("ap.pilot.wind.gps_wind_offset")
-
-    FIELD_PILOT_RW_NUMBER_DEG_S("ap.pilot.rate.maxturnrate")
-    FIELD_PILOT_RW_NUMBER_DEG_S("ap.pilot.rate.turnraterate")
-
-    FIELD_RO_BOOLEAN("imu.warning")
-
-    FIELD_RO_INTEGER("ap.modes")
-    FIELD_RO_INTEGER("imu.alignmentCounter")
-    FIELD_RO_INTEGER("gps.alignmentCounter")
-    FIELD_RO_INTEGER("servo.faults")
-    FIELD_RO_INTEGER("ap.tack.count")
-
-    FIELD_RO_NUMBER("rudder.speed")
-    FIELD_RO_NUMBER("servo.duty")
-    FIELD_RO_NUMBER("servo.current.noise")
-    FIELD_RO_NUMBER("servo.speed")
-    FIELD_RO_NUMBER("servo.position")
-    FIELD_RO_NUMBER("servo.raw_command")
-
-    FIELD_RO_NUMBER_AH("servo.amp_hours")
-
-    FIELD_RO_NUMBER_C("servo.controller_temp")
-    FIELD_RO_NUMBER_C("servo.motor_temp")
-
-    FIELD_RO_NUMBER_DEG("ap.heading_error")
-    FIELD_RO_NUMBER_DEG("ap.heading_error_int")
-    FIELD_RO_NUMBER_DEG("ap.gps_compass_offset")
-    FIELD_RO_NUMBER_DEG("ap.wind_compass_offset")
-    FIELD_RO_NUMBER_DEG("ap.true_wind_compass_offset")
-    FIELD_RO_NUMBER_DEG("imu.pitch")
-    FIELD_RO_NUMBER_DEG("imu.roll")
-    FIELD_RO_NUMBER_DEG("imu.heading")
-    FIELD_RO_NUMBER_DEG("imu.heading_lowpass")
-    FIELD_RO_NUMBER_DEG("gps.track")
-    FIELD_RO_NUMBER_DEG("gps.leeway_ground")
-    FIELD_RO_NUMBER_DEG("gps.compass_error")
-    FIELD_RO_NUMBER_DEG("gps.declination")
-    FIELD_RO_NUMBER_DEG("wind.direction")
-    FIELD_RO_NUMBER_DEG("truewind.direction")
-    FIELD_RO_NUMBER_DEG("truewind.filtered_direction")
-    FIELD_RO_NUMBER_DEG("apb.track")
-    FIELD_RO_NUMBER_DEG("water.leeway")
-    FIELD_RO_NUMBER_DEG("water.current.direction")
-    FIELD_RO_NUMBER_DEG("water.wind.direction")
-    FIELD_RO_NUMBER_DEG("rudder.angle")
-
-    FIELD_RO_NUMBER_DEG_S("imu.headingrate")
-    FIELD_RO_NUMBER_DEG_S("imu.headingrate_lowpass")
-    FIELD_RO_NUMBER_DEG_S("imu.headingraterate")
-    FIELD_RO_NUMBER_DEG_S("imu.headingraterate_lowpass")
-    FIELD_RO_NUMBER_DEG_S("imu.pitchrate")
-    FIELD_RO_NUMBER_DEG_S("imu.rollrate")
-
-    FIELD_RO_NUMBER_HZ("imu.frequency")
-
-    FIELD_RO_NUMBER_KN("gps.speed")
-    FIELD_RO_NUMBER_KN("wind.speed")
-    FIELD_RO_NUMBER_KN("wind.filtered_speed")
-    FIELD_RO_NUMBER_KN("truewind.speed")
-    FIELD_RO_NUMBER_KN("truewind.filtered_speed")
-    FIELD_RO_NUMBER_KN("water.speed")
-    FIELD_RO_NUMBER_KN("water.current.speed")
-    FIELD_RO_NUMBER_KN("water.wind.speed")
-
-    FIELD_RO_NUMBER_NMI("apb.xte")
-
-    FIELD_RO_NUMBER_S("ap.runtime")
-    FIELD_RO_NUMBER_S("imu.uptime")
-
-    FIELD_RO_NUMBER_V("servo.voltage")
-
-    FIELD_RO_NUMBER_W("servo.watts")
-
-    FIELD_RO_OBJECT_VALUE("ap.timings")
-    FIELD_RO_OBJECT_VALUE("gps.fix")
-
-    FIELD_RO_QUATERNION_VALUE("imu.fusionQPose")
-
-    FIELD_RO_VECTOR3_VALUE("imu.accel")
-    FIELD_RO_VECTOR3_VALUE("imu.gyro")
-    FIELD_RO_VECTOR3_VALUE("imu.compass")
-    FIELD_RO_VECTOR3_VALUE("imu.accel.residuals")
-    FIELD_RO_VECTOR3_VALUE("imu.gyrobias")
-
-    FIELD_RW_BOOLEAN("ap.gps_and_nav_modes")
-    FIELD_RW_BOOLEAN("servo.engaged")
-    FIELD_RW_BOOLEAN("servo.use_brake")
-    FIELD_RW_BOOLEAN("servo.compensate_current")
-    FIELD_RW_BOOLEAN("servo.compensate_voltage")
-    FIELD_RW_BOOLEAN("servo.use_eeprom")
-    FIELD_RW_BOOLEAN("ap.tack.use_heel")
-    FIELD_RW_BOOLEAN("ap.tack.use_wind_direction")
-
-    FIELD_RW_MODE_ENUM("ap.preferred_mode")
-
-    FIELD_RW_NUMBER("ap.wind_offset_filter")
-    FIELD_RW_NUMBER("imu.heading_lowpass_constant")
-    FIELD_RW_NUMBER("imu.headingrate_lowpass_constant")
-    FIELD_RW_NUMBER("imu.headingraterate_lowpass_constant")
-    FIELD_RW_NUMBER("wind.filter_constant")
-    FIELD_RW_NUMBER("wind.filter_factor")
-    FIELD_RW_NUMBER("truewind.filter_constant")
-    FIELD_RW_NUMBER("truewind.filter_factor")
-    FIELD_RW_NUMBER("rudder.scale")
-    FIELD_RW_NUMBER("rudder.nonlinearity")
-    FIELD_RW_NUMBER("servo.speed_gain")
-    FIELD_RW_NUMBER("servo.current.factor")
-    FIELD_RW_NUMBER("servo.current.offset")
-    FIELD_RW_NUMBER("servo.voltage.factor")
-    FIELD_RW_NUMBER("servo.voltage.offset")
-    FIELD_RW_NUMBER("servo.max_slew_speed")
-    FIELD_RW_NUMBER("servo.max_slew_slow")
-    FIELD_RW_NUMBER("servo.gain")
-    FIELD_RW_NUMBER("servo.clutch_pwm")
-    FIELD_RW_NUMBER("servo.speed.min")
-    FIELD_RW_NUMBER("servo.speed.max")
-    FIELD_RW_NUMBER("servo.position.p")
-    FIELD_RW_NUMBER("servo.position.i")
-    FIELD_RW_NUMBER("servo.position.d")
-    FIELD_RW_NUMBER("servo.controller")
-    FIELD_RW_NUMBER("ap.tack.threshold")
-
-    FIELD_RW_NUMBER_A("servo.max_current")
-
-    FIELD_RW_NUMBER_C("servo.max_controller_temp")
-    FIELD_RW_NUMBER_C("servo.max_motor_temp")
-
-    FIELD_RW_NUMBER_DEG("wind.offset")
-    FIELD_RW_NUMBER_DEG("truewind.offset")
-    FIELD_RW_NUMBER_DEG("rudder.offset")
-    FIELD_RW_NUMBER_DEG("rudder.range")
-    FIELD_RW_NUMBER_DEG("ap.tack.angle")
-
-    FIELD_RW_NUMBER_DEG_NMI("apb.xte.gain")
-
-    FIELD_RW_NUMBER_DEG_S("ap.tack.rate")
-
-    FIELD_RW_NUMBER_HZ("imu.rate")
-    FIELD_RW_NUMBER_HZ("gps.rate")
-    FIELD_RW_NUMBER_HZ("wind.rate")
-    FIELD_RW_NUMBER_HZ("truewind.rate")
-    FIELD_RW_NUMBER_HZ("water.rate")
-    FIELD_RW_NUMBER_HZ("rudder.rate")
-
-    FIELD_RW_NUMBER_M("wind.sensors_height")
-    FIELD_RW_NUMBER_M("truewind.sensors_height")
-
-    FIELD_RW_NUMBER_S("servo.period")
-    FIELD_RW_NUMBER_S("ap.tack.timeout")
-    FIELD_RW_NUMBER_S("ap.tack.delay")
-
-    FIELD_RW_OBJECT_VALUE("servo.calibration")
-
-    FIELD_RW_QUATERNION_VALUE("imu.alignmentQ")
-
-    FIELD_RW_SOURCE_ENUM("gps.source")
-    FIELD_RW_SOURCE_ENUM("truewind.source")
-    FIELD_RW_SOURCE_ENUM("apb.source")
-    FIELD_RW_SOURCE_ENUM("water.source")
-    FIELD_RW_SOURCE_ENUM("water.leeway.source")
-    FIELD_RW_SOURCE_ENUM("rudder.source")
+    {FieldId::pilot_basic_Pgain, "ap.pilot.learning.Pgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.learning.D", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.learning.Dgain", "", FieldType::number, false, false, true},
+    {FieldId::compat_value, "ap.pilot.learning.W", "", FieldType::number, true, true, true},
+    {FieldId::compat_value, "ap.pilot.learning.Wgain", "", FieldType::number, false, false, true},
 };
-
-#undef FIELD_CMD_NUMBER
-#undef FIELD_CMD_NUMBER_DEG
-#undef FIELD_CMD_TACK_DIRECTION_ENUM
-#undef FIELD_CMD_TACK_STATE_ENUM
-#undef FIELD_PILOT_RW_NUMBER
-#undef FIELD_PILOT_RW_NUMBER_DEG
-#undef FIELD_PILOT_RW_NUMBER_DEG_S
-#undef FIELD_RO_BOOLEAN
-#undef FIELD_RO_INTEGER
-#undef FIELD_RO_NUMBER
-#undef FIELD_RO_NUMBER_AH
-#undef FIELD_RO_NUMBER_C
-#undef FIELD_RO_NUMBER_DEG
-#undef FIELD_RO_NUMBER_DEG_S
-#undef FIELD_RO_NUMBER_HZ
-#undef FIELD_RO_NUMBER_KN
-#undef FIELD_RO_NUMBER_NMI
-#undef FIELD_RO_NUMBER_S
-#undef FIELD_RO_NUMBER_V
-#undef FIELD_RO_NUMBER_W
-#undef FIELD_RO_OBJECT_VALUE
-#undef FIELD_RO_QUATERNION_VALUE
-#undef FIELD_RO_VECTOR3_VALUE
-#undef FIELD_RW_BOOLEAN
-#undef FIELD_RW_MODE_ENUM
-#undef FIELD_RW_NUMBER
-#undef FIELD_RW_NUMBER_A
-#undef FIELD_RW_NUMBER_C
-#undef FIELD_RW_NUMBER_DEG
-#undef FIELD_RW_NUMBER_DEG_NMI
-#undef FIELD_RW_NUMBER_DEG_S
-#undef FIELD_RW_NUMBER_HZ
-#undef FIELD_RW_NUMBER_M
-#undef FIELD_RW_NUMBER_S
-#undef FIELD_RW_OBJECT_VALUE
-#undef FIELD_RW_QUATERNION_VALUE
-#undef FIELD_RW_SOURCE_ENUM
 
 static constexpr size_t field_definition_count = sizeof(field_definitions) / sizeof(field_definitions[0]);
 
