@@ -6,6 +6,7 @@ namespace ship_data_model {
 
 enum class FieldId {
     unknown,
+    compat_value,
     server_version,
     server_uptime_s,
     status_last_error,
@@ -18,19 +19,24 @@ enum class FieldId {
     wind_filtered_direction_deg,
     servo_current_a,
     servo_telemetry_current_a,
+    servo_flags,
+    servo_telemetry_state,
     rudder_calibration_state,
+    imu_calibration_heading_offset_deg,
     pilot_basic_P,
     pilot_basic_Pgain
 };
 
 enum class FieldType {
     number,
+    integer,
     boolean,
     string_value,
     mode_enum,
     pilot_enum,
     source_enum,
-    rudder_calibration_enum
+    rudder_calibration_enum,
+    servo_state_enum
 };
 
 struct FieldMeta {
@@ -44,7 +50,9 @@ struct FieldMeta {
 };
 
 static constexpr FieldMeta field_definitions[] = {
+    {FieldId::compat_value, "compat.value", "", FieldType::number, false, false, false},
     {FieldId::server_version, "server.version", "", FieldType::string_value, false, false, false},
+    {FieldId::server_version, "ap.version", "", FieldType::string_value, false, false, false},
     {FieldId::server_uptime_s, "server.uptime", "s", FieldType::number, false, false, false},
     {FieldId::status_last_error, "status.last_error", "", FieldType::string_value, false, false, false},
     {FieldId::ap_enabled, "ap.enabled", "", FieldType::boolean, true, false, false},
@@ -56,8 +64,12 @@ static constexpr FieldMeta field_definitions[] = {
     {FieldId::wind_filtered_direction_deg, "wind.filtered_direction", "deg", FieldType::number, false, false, false},
     {FieldId::servo_current_a, "servo.current", "A", FieldType::number, false, false, false},
     {FieldId::servo_telemetry_current_a, "servo.telemetry.current", "A", FieldType::number, false, false, false},
+    {FieldId::servo_flags, "servo.flags", "", FieldType::integer, false, false, false},
+    {FieldId::servo_telemetry_state, "servo.state", "", FieldType::servo_state_enum, false, false, false},
     {FieldId::rudder_calibration_state, "rudder.calibration_state", "", FieldType::rudder_calibration_enum, true, true, false},
+    {FieldId::imu_calibration_heading_offset_deg, "imu.heading_offset", "deg", FieldType::number, true, true, false},
     {FieldId::pilot_basic_P, "ap.pilot.basic.P", "", FieldType::number, true, true, true},
+    {FieldId::pilot_basic_P, "ap.pilot.learning.P", "", FieldType::number, true, true, true},
     {FieldId::pilot_basic_Pgain, "ap.pilot.basic.Pgain", "", FieldType::number, false, false, true}
 };
 
