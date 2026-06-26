@@ -72,6 +72,7 @@ struct ServoTelemetryData {
     Stamped<Real> command_norm;
     Stamped<Real> raw_command_norm;
     Stamped<Real> position_deg;
+    Stamped<Real> rudder_feedback_deg;
     Stamped<Real> voltage_v;
     Stamped<Real> current_a;
     Stamped<Real> controller_temp_c;
@@ -83,17 +84,21 @@ struct ServoTelemetryData {
 template<typename Real = float>
 struct ServoCalibrationData {
     char source[64] = {0};
+    Setting<bool> valid;
     Setting<RudderCalibrationState> state;
     RangeSetting<Real> min_deg;
     RangeSetting<Real> max_deg;
     RangeSetting<Real> center_deg;
+    RangeSetting<Real> rudder_min_deg;
+    RangeSetting<Real> rudder_max_deg;
+    RangeSetting<Real> rudder_center_deg;
 };
 
 template<typename Real = float>
 struct TackData {
     Setting<bool> enabled;
-    Setting<int32_t> state;
-    Setting<int32_t> direction;
+    Setting<TackState> state;
+    Setting<TackDirection> direction;
     RangeSetting<Real> timeout_s;
     RangeSetting<Real> delay_s;
     RangeSetting<Real> angle_deg;
