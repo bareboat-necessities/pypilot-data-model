@@ -1,8 +1,21 @@
 #pragma once
 
+#include <string.h>
 #include "core.hpp"
 
 namespace ship_data_model {
+
+inline bool rudder_calibration_state_from_name(const char* name, RudderCalibrationState& out) {
+    if (!name) return false;
+    if (strcmp(name, "idle") == 0) out = RudderCalibrationState::idle;
+    else if (strcmp(name, "reset") == 0) out = RudderCalibrationState::reset;
+    else if (strcmp(name, "centered") == 0) out = RudderCalibrationState::centered;
+    else if (strcmp(name, "starboard range") == 0) out = RudderCalibrationState::starboard_range;
+    else if (strcmp(name, "port range") == 0) out = RudderCalibrationState::port_range;
+    else if (strcmp(name, "auto gain") == 0) out = RudderCalibrationState::auto_gain;
+    else return false;
+    return true;
+}
 
 inline bool servo_faulted(uint32_t flags) {
     const uint32_t fault_mask = servo_overtemp_fault |

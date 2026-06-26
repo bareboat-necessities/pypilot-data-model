@@ -5,7 +5,6 @@
 #include "navigation.hpp"
 #include "wind_n_sea.hpp"
 #include "steering.hpp"
-#include "profile.hpp"
 #include "server.hpp"
 #include "status.hpp"
 #include "runtime_publication.hpp"
@@ -35,7 +34,7 @@ struct DataModel {
     PilotOutputData<Real> pilot_output;
     TackData<Real> tack;
 
-    ProfileData<Real> profile;
+    AutopilotProfileData<Real> profile;
     RuntimePublicationState<Real> runtime_publication;
 };
 

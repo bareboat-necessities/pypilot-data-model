@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string.h>
+#include "core.hpp"
 #include "field_def.hpp"
-#include "pypilot_names.hpp"
 
 namespace ship_data_model {
 
