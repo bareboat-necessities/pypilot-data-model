@@ -38,4 +38,4 @@ struct DataModel {
 
 } // namespace ship_data_model
 
-#include "mapping.hpp"
+#include "data_model_mapping.hpp"
