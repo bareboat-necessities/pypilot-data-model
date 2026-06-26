@@ -1,11 +1,11 @@
 #pragma once
 
-#include "core.hpp"
+#include "core_data_types.hpp"
 
 namespace ship_data_model {
 
 template<typename Real = float>
-struct RuntimePublicationState {
+struct ValuePublicationState {
     Stamped<uint32_t> published_value_count;
     Stamped<uint32_t> published_byte_count;
 };
