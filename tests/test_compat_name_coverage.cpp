@@ -1,9 +1,9 @@
 #include <cassert>
 #include <cstdio>
-#include <pypilot_data_model.hpp>
+#include <ship_data_model.hpp>
 #include "support/pypilot_compat_name_list.hpp"
 
-using namespace pypilot_data_model;
+using namespace ship_data_model;
 using namespace pypilot_data_model_test;
 
 int main() {
