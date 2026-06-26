@@ -59,11 +59,24 @@ struct ImuStateData {
 };
 
 template<typename Real = float>
+struct ImuVectorCalibrationData {
+    Setting<bool> valid;
+    Stamped<Vec3<Real>> bias;
+};
+
+template<typename Real = float>
 struct ImuCalibrationData {
     Setting<bool> locked;
+    Setting<ImuCalibrationState> state;
+
+    ImuVectorCalibrationData<Real> accel;
+    ImuVectorCalibrationData<Real> gyro;
+    ImuVectorCalibrationData<Real> compass;
+
     Stamped<Vec3<Real>> accel_bias_g;
     Stamped<Vec3<Real>> gyro_bias_deg_s;
     Stamped<Vec3<Real>> compass_offset;
+    Stamped<Real> compass_field_strength;
 };
 
 } // namespace ship_data_model
