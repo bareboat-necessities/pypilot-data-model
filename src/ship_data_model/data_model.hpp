@@ -3,13 +3,11 @@
 #include "autopilot.hpp"
 #include "boatimu.hpp"
 #include "navigation.hpp"
-#include "environment.hpp"
+#include "wind_n_sea.hpp"
 #include "steering.hpp"
-#include "pilots.hpp"
 #include "profile.hpp"
 #include "server.hpp"
 #include "status.hpp"
-#include "pilot_io.hpp"
 #include "runtime_publication.hpp"
 
 namespace ship_data_model {
