@@ -50,15 +50,10 @@ int main() {
     assert(field_id_from_name("server.version") == FieldId::server_version);
     assert(field_meta(FieldId::servo_flags) != 0);
 
-    size_t dictionary_count = 0;
-    const DataDictionaryEntry* dictionary = core_data_dictionary(dictionary_count);
-    assert(dictionary != 0);
-    assert(dictionary_count > 20);
-    const DataDictionaryEntry* servo_current = find_core_data_dictionary_entry("servo.current");
+    const FieldMeta* servo_current = field_meta(FieldId::servo_current_a);
     assert(servo_current != 0);
-    assert(servo_current->field_id == FieldId::servo_current_a);
-    assert(servo_current->type == DataValueType::number);
-    assert(servo_current->scope == DataValueScope::telemetry);
+    assert(std::strcmp(servo_current->pypilot_name, "servo.current") == 0);
+    assert(servo_current->type == FieldType::number);
     assert(!servo_current->writable);
 
     const uint32_t published_count = 42u;
