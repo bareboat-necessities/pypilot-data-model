@@ -1,8 +1,8 @@
 #include <cassert>
 #include <cstring>
-#include <pypilot_data_model.hpp>
+#include <ship_data_model.hpp>
 
-using namespace pypilot_data_model;
+using namespace ship_data_model;
 
 int main() {
     DataModel<> model;
