@@ -1,6 +1,6 @@
 #pragma once
 
-#include "autopilot.hpp"
+#include "autopilot_data.hpp"
 #include "boatimu.hpp"
 #include "navigation.hpp"
 #include "wind_n_sea.hpp"
@@ -39,4 +39,3 @@ struct DataModel {
 } // namespace ship_data_model
 
 #include "mapping.hpp"
-#include "data_dictionary.hpp"
