@@ -1,14 +1,14 @@
 #include <Arduino.h>
-#include <pypilot_data_model.hpp>
+#include <ship_data_model.hpp>
 
-pypilot_data_model::DataModel<> model;
+ship_data_model::DataModel<> model;
 
 void setup() {
   Serial.begin(115200);
   while (!Serial) {}
 
   model.ap.enabled.value = true;
-  model.ap.mode.value = pypilot_data_model::AutopilotMode::wind;
+  model.ap.mode.value = ship_data_model::AutopilotMode::wind;
   model.wind.apparent.direction_deg.set(-35.0f, micros());
   model.servo.current_a.set(1.2f, micros());
 
