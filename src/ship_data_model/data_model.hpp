@@ -33,7 +33,7 @@ struct DataModel {
     TackData<Real> tack;
 
     AutopilotProfileData<Real> profile;
-    RuntimePublicationState<Real> runtime_publication;
+    ValuePublicationState<Real> runtime_publication;
 };
 
 } // namespace ship_data_model
