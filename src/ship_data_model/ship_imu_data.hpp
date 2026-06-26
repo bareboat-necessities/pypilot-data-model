@@ -5,7 +5,7 @@
 namespace ship_data_model {
 
 template<typename Real = float>
-struct BoatImuData {
+struct ShipImuData {
     Setting<uint8_t> source_kind;
     char device_id[32] = {0};
     uint64_t last_update_us = 0;
