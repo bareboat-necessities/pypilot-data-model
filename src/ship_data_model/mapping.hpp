@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string.h>
-#include "field_table.hpp"
+#include "field_def.hpp"
 #include "pypilot_names.hpp"
 
 namespace ship_data_model {
@@ -19,14 +19,14 @@ inline void copy_data_text(char* out, size_t out_size, const char* text) {
 
 inline FieldId field_id_from_name(const char* name) {
     if (!name) return FieldId::unknown;
-    for (size_t i = 0; i < field_table_size; ++i) {
-        if (strcmp(field_table[i].pypilot_name, name) == 0) return field_table[i].id;
+    for (size_t i = 0; i < field_definition_count; ++i) {
+        if (strcmp(field_definitions[i].pypilot_name, name) == 0) return field_definitions[i].id;
     }
     return FieldId::unknown;
 }
 
 inline const FieldMeta* field_meta(FieldId id) {
-    for (size_t i = 0; i < field_table_size; ++i) if (field_table[i].id == id) return &field_table[i];
+    for (size_t i = 0; i < field_definition_count; ++i) if (field_definitions[i].id == id) return &field_definitions[i];
     return nullptr;
 }
 
