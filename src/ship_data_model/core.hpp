@@ -61,6 +61,51 @@ enum ModeMask : uint32_t {
     mode_mask_true_wind = 1u << 4
 };
 
+enum class SystemHealth : uint8_t {
+    unknown,
+    ok,
+    degraded,
+    fault
+};
+
+enum SystemFault : uint32_t {
+    system_fault_none  = 0u,
+    system_fault_imu   = 1u << 0,
+    system_fault_servo = 1u << 1,
+    system_fault_gps   = 1u << 2,
+    system_fault_wind  = 1u << 3
+};
+
+inline bool system_faulted(uint32_t faults) {
+    return faults != system_fault_none;
+}
+
+enum class ImuCalibrationState : uint8_t {
+    unknown,
+    invalid,
+    learning,
+    valid
+};
+
+enum class TackState : int32_t {
+    idle,
+    waiting,
+    tacking,
+    complete
+};
+
+enum class TackDirection : int32_t {
+    port = -1,
+    none = 0,
+    starboard = 1
+};
+
+enum class PilotCommandSource : uint32_t {
+    internal,
+    runtime,
+    remote
+};
+
 enum class RudderCalibrationState : uint8_t {
     idle,
     reset,
