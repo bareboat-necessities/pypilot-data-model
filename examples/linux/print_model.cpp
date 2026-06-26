@@ -1,10 +1,10 @@
 #include <iostream>
-#include <pypilot_data_model.hpp>
+#include <ship_data_model.hpp>
 
 int main() {
-    pypilot_data_model::DataModel<> model;
+    ship_data_model::DataModel<> model;
     model.ap.enabled.value = true;
-    model.ap.mode.value = pypilot_data_model::AutopilotMode::wind;
+    model.ap.mode.value = ship_data_model::AutopilotMode::wind;
     model.ap.heading_command_deg.set(42.0f, 1000000);
     model.wind.apparent.filtered_direction_deg.set(-38.5f, 1000000);
     model.servo.current_a.set(1.25f, 1000000);
