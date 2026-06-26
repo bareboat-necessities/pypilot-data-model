@@ -3,7 +3,7 @@
 #include "autopilot_data.hpp"
 #include "ship_imu_data.hpp"
 #include "nav_data.hpp"
-#include "wind_n_sea.hpp"
+#include "wind_sea_data.hpp"
 #include "steering_data.hpp"
 #include "runtime_publication.hpp"
 
