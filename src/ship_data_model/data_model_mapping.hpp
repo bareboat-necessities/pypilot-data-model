@@ -34,11 +34,17 @@ inline bool looks_like_pypilot_runtime_name(const char* name) {
            data_model_name_starts_with(name, "servo.");
 }
 
-inline FieldId field_id_from_name(const char* name) {
-    if (!name) return FieldId::unknown;
+inline const FieldMeta* field_meta_from_name(const char* name) {
+    if (!name) return nullptr;
     for (size_t i = 0; i < field_definition_count; ++i) {
-        if (strcmp(field_definitions[i].pypilot_name, name) == 0) return field_definitions[i].id;
+        if (strcmp(field_definitions[i].pypilot_name, name) == 0) return &field_definitions[i];
     }
+    return nullptr;
+}
+
+inline FieldId field_id_from_name(const char* name) {
+    const FieldMeta* meta = field_meta_from_name(name);
+    if (meta) return meta->id;
     return looks_like_pypilot_runtime_name(name) ? FieldId::compat_value : FieldId::unknown;
 }
 
