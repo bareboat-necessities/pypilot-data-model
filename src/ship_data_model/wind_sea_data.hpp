@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core.hpp"
+#include "core_data_types.hpp"
 
 namespace ship_data_model {
 
