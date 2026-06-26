@@ -18,7 +18,7 @@ struct DataModel {
     NavigationData<Real> navigation;
     WindData<Real> wind;
     WaterData<Real> water;
-    BoatImuData<Real> imu;
+    ShipImuData<Real> imu;
     ImuStateData<Real> imu_state;
     ImuCalibrationData<Real> imu_calibration;
 
