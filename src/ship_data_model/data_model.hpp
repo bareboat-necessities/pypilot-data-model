@@ -5,14 +5,13 @@
 #include "navigation.hpp"
 #include "wind_n_sea.hpp"
 #include "steering.hpp"
-#include "server.hpp"
 #include "runtime_publication.hpp"
 
 namespace ship_data_model {
 
 template<typename Real = float>
 struct DataModel {
-    ServerData<Real> server;
+    AutopilotServerData<Real> server;
     AutopilotStatusData<Real> status;
 
     AutopilotData<Real> ap;
