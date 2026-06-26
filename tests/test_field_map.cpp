@@ -19,6 +19,35 @@ int main() {
     assert(meta->type == FieldType::number);
     assert(!meta->writable);
 
+    const FieldMeta* ap_timings = field_meta_from_name("ap.timings");
+    assert(ap_timings);
+    assert(ap_timings->id == FieldId::compat_value);
+    assert(ap_timings->type == FieldType::json_value);
+    assert(!ap_timings->writable);
+
+    const FieldMeta* imu_accel = field_meta_from_name("imu.accel");
+    assert(imu_accel);
+    assert(imu_accel->type == FieldType::vector3_value);
+    assert(!imu_accel->writable);
+
+    const FieldMeta* heading_command_rate = field_meta_from_name("ap.heading_command_rate");
+    assert(heading_command_rate);
+    assert(heading_command_rate->type == FieldType::number);
+    assert(std::strcmp(heading_command_rate->unit, "deg/s") == 0);
+    assert(!heading_command_rate->writable);
+
+    const FieldMeta* servo_command = field_meta_from_name("servo.command");
+    assert(servo_command);
+    assert(servo_command->type == FieldType::number);
+    assert(servo_command->writable);
+    assert(!servo_command->persistent);
+
+    const FieldMeta* pilot_gain = field_meta_from_name("ap.pilot.basic.Pgain");
+    assert(pilot_gain);
+    assert(pilot_gain->pilot_specific);
+    assert(!pilot_gain->writable);
+    assert(!pilot_gain->persistent);
+
     assert(apply_number(model, heading_id, 87.5f, now_us));
     assert(model.ap.heading_deg.valid);
     assert(model.ap.heading_deg.value == 87.5f);
